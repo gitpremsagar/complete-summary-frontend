@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/components/providers/auth-provider";
 import { ApiError } from "@/lib/api";
 import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
+import { safeNext } from "@/lib/safe-next";
 
 const fields = [
   { name: "name", label: "Name", type: "text", autoComplete: "name", placeholder: "Jane Doe" },
@@ -23,6 +24,8 @@ const fields = [
 
 export function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next");
   const { register } = useAuth();
 
   const form = useForm<RegisterInput>({
@@ -34,7 +37,7 @@ export function RegisterForm() {
     try {
       const user = await register(values);
       toast.success(`Welcome, ${user.name}! Your account has been created.`);
-      router.replace("/dashboard");
+      router.replace(safeNext(next));
       router.refresh();
     } catch (err) {
       if (err instanceof ApiError) {
@@ -88,7 +91,7 @@ export function RegisterForm() {
           </Button>
           <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-foreground underline-offset-4 hover:underline">
+            <Link href={next ? `/login?next=${encodeURIComponent(next)}` : "/login"} className="font-medium text-foreground underline-offset-4 hover:underline">
               Sign in
             </Link>
           </p>

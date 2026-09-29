@@ -1,0 +1,290 @@
+/* Typography and blocks for summary articles (MDX content). */
+
+.cs-article {
+  counter-reset: cs-section;
+  font-size: 16.5px;
+  line-height: 1.7;
+}
+
+.cs-sec {
+  counter-increment: cs-section;
+  scroll-margin-top: 80px;
+  margin: 0 0 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--card);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.06);
+}
+.dark .cs-sec {
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+}
+
+.cs-sec-head {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+}
+.cs-sec-head h2 {
+  flex: 1;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+.cs-sec-num {
+  display: grid;
+  place-items: center;
+  min-width: 38px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+}
+.cs-sec-num::before {
+  content: counter(cs-section, decimal-leading-zero);
+}
+.cs-sec[data-variant="checklist"] .cs-sec-num::before {
+  content: "\2713";
+}
+.cs-sec-chev {
+  color: var(--muted-foreground);
+  transition: transform 0.2s;
+}
+.cs-sec[data-collapsed] .cs-sec-chev {
+  transform: rotate(-90deg);
+}
+.cs-sec[data-collapsed] .cs-sec-body,
+.cs-sec[data-search-hidden] {
+  display: none;
+}
+
+.cs-sec-body {
+  padding: 0 26px 22px;
+}
+@media (max-width: 640px) {
+  .cs-sec-head {
+    padding: 16px;
+  }
+  .cs-sec-head h2 {
+    font-size: 18px;
+  }
+  .cs-sec-body {
+    padding: 0 16px 18px;
+  }
+}
+
+.cs-sec-body p {
+  margin: 0.75em 0;
+}
+.cs-sec-body h3 {
+  margin: 22px 0 6px;
+  color: var(--brand-2);
+  font-size: 17px;
+  font-weight: 650;
+}
+.cs-sec-body h4 {
+  margin: 0 0 6px;
+  font-weight: 650;
+}
+.cs-sec-body ul,
+.cs-sec-body ol {
+  margin: 0.6em 0;
+  padding-left: 22px;
+}
+.cs-sec-body ul {
+  list-style: disc;
+}
+.cs-sec-body ol {
+  list-style: decimal;
+}
+.cs-sec-body li {
+  margin: 4px 0;
+}
+.cs-sec-body b,
+.cs-sec-body strong {
+  font-weight: 650;
+}
+.cs-sec-body a {
+  color: var(--brand);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cs-key,
+.cs-warn {
+  margin: 16px 0;
+  padding: 12px 16px;
+  border-left: 4px solid var(--brand);
+  border-radius: 0 12px 12px 0;
+  background: color-mix(in srgb, var(--brand) 10%, transparent);
+}
+.cs-warn {
+  border-left-color: var(--warn);
+  background: color-mix(in srgb, var(--warn) 10%, transparent);
+}
+.cs-key > b:first-child,
+.cs-warn > b:first-child {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--brand);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cs-warn > b:first-child {
+  color: var(--warn);
+}
+
+.cs-quote {
+  position: relative;
+  margin: 16px 0;
+  padding: 14px 18px 12px 46px;
+  border-radius: 14px;
+  background: var(--muted);
+  font-style: italic;
+}
+.cs-quote::before {
+  content: "\201C";
+  position: absolute;
+  top: -4px;
+  left: 12px;
+  color: var(--brand-2);
+  font-size: 52px;
+  font-style: normal;
+  line-height: 1;
+}
+.cs-quote cite {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  font-style: normal;
+}
+
+.cs-study {
+  margin: 16px 0;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--brand-2) 8%, transparent), transparent);
+}
+.cs-study-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--brand-2);
+  color: #fff;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.cs-study h4 {
+  margin: 6px 0 8px;
+  font-size: 16px;
+}
+.cs-study dl {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 4px 12px;
+  margin: 0;
+}
+.cs-study dt {
+  padding-top: 3px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  font-weight: 700;
+}
+.cs-study dd {
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .cs-study dl {
+    grid-template-columns: 1fr;
+  }
+  .cs-study dt {
+    padding-top: 8px;
+  }
+}
+
+.cs-grid {
+  display: grid;
+  gap: 14px;
+  margin: 14px 0;
+}
+.cs-grid[data-cols="2"] {
+  grid-template-columns: 1fr 1fr;
+}
+.cs-grid[data-cols="3"] {
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 900px) {
+  .cs-grid[data-cols] {
+    grid-template-columns: 1fr;
+  }
+}
+.cs-box {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--muted);
+}
+
+.cs-table-wrap {
+  margin: 12px 0;
+  overflow-x: auto;
+}
+.cs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+.cs-table th,
+.cs-table td {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+.cs-table th {
+  background: var(--muted);
+  font-weight: 650;
+}
+
+/* Interactive widget frame */
+.cs-widget {
+  margin: 20px 0;
+  padding: 18px;
+  border: 2px dashed color-mix(in srgb, var(--brand) 50%, var(--border));
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--brand) 5%, transparent);
+  font-size: 15.5px;
+}
+.cs-output {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--brand-2);
+  border-radius: 12px;
+  background: var(--card);
+  white-space: pre-wrap;
+}
+
+@media print {
+  .cs-no-print,
+  .cs-widget {
+    display: none !important;
+  }
+  .cs-sec[data-collapsed] .cs-sec-body {
+    display: block;
+  }
+}

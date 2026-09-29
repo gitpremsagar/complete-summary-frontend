@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/components/providers/auth-provider";
+import { ContinueReading } from "@/components/continue-reading";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -12,8 +13,9 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Welcome, {user.name}</h1>
-        <p className="text-muted-foreground">You are signed in.</p>
+        <p className="text-muted-foreground">Pick up where you left off.</p>
       </div>
+      <ContinueReading />
       <Card className="max-w-md">
         <CardHeader>
           <CardTitle>Your account</CardTitle>

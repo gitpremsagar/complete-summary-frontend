@@ -17,6 +17,8 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+const PROTECTED_PREFIXES = ["/dashboard", "/admin"];
+
 async function fetchCurrentUser(): Promise<User | null> {
   try {
     const data = await api<{ user: User }>("/api/auth/me", { redirectOnUnauthorized: false });
@@ -68,7 +70,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await api("/api/auth/logout", { method: "POST" });
     } finally {
       setUser(null);
-      router.replace("/login");
+      if (PROTECTED_PREFIXES.some((p) => window.location.pathname.startsWith(p))) {
+        router.replace("/login");
+      }
       router.refresh();
     }
   }, [router]);

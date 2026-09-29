@@ -13,10 +13,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/components/providers/auth-provider";
 import { ApiError } from "@/lib/api";
 import { loginSchema, type LoginInput } from "@/lib/validations/auth";
-
-function safeNext(next: string | null) {
-  return next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
-}
+import { safeNext } from "@/lib/safe-next";
 
 export function LoginForm() {
   const router = useRouter();
@@ -92,7 +89,9 @@ export function LoginForm() {
           </Button>
           <p className="text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="font-medium text-foreground underline-offset-4 hover:underline">
+            <Link
+              href={searchParams.get("next") ? `/register?next=${encodeURIComponent(searchParams.get("next")!)}` : "/register"}
+              className="font-medium text-foreground underline-offset-4 hover:underline">
               Sign up
             </Link>
           </p>
