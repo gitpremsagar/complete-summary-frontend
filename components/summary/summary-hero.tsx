@@ -1,4 +1,5 @@
 import { ClockIcon } from "lucide-react";
+import { YouTubeEmbed } from "@/components/summary/youtube-embed";
 import type { SummaryMeta } from "@/lib/summaries";
 
 export function SummaryHero({ summary, readingMinutes }: { summary: SummaryMeta; readingMinutes: number }) {
@@ -33,6 +34,11 @@ export function SummaryHero({ summary, readingMinutes }: { summary: SummaryMeta;
           </>
         )}
       </p>
+      {summary.youtubeId && (
+        <div className="mt-5">
+          <YouTubeEmbed id={summary.youtubeId} title={summary.title} />
+        </div>
+      )}
       <p className="mt-2 text-muted-foreground">{summary.intro}</p>
       {summary.tags.length > 0 && (
         <ul className="mt-4 flex flex-wrap gap-2" aria-label="Topics">

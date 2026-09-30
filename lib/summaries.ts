@@ -24,6 +24,8 @@ export interface SummaryMeta {
   show?: string;
   episode?: string;
   sourceUrl?: string;
+  /** YouTube video ID of the original, embedded at the top of the summary. */
+  youtubeId?: string;
   publishedAt: string;
   updatedAt?: string;
   tags: string[];
@@ -46,6 +48,8 @@ export const summaries: SummaryMeta[] = [
     host: "Raj Shamani",
     show: "Figuring Out",
     episode: "FO556",
+    sourceUrl: "https://www.youtube.com/watch?v=Y566_T-YlNQ",
+    youtubeId: "Y566_T-YlNQ",
     publishedAt: "2026-09-29",
     tags: [
       "Cortisol rhythm",
@@ -79,6 +83,8 @@ export const summaries: SummaryMeta[] = [
     host: "Raj Shamani",
     show: "Figuring Out",
     episode: "FO559",
+    sourceUrl: "https://www.youtube.com/watch?v=4Vz6L8B73i4",
+    youtubeId: "4Vz6L8B73i4",
     publishedAt: "2026-09-29",
     tags: [
       "Neuroplasticity",
