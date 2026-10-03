@@ -75,9 +75,9 @@ export const summaries: SummaryMeta[] = [
     kind: "Podcast",
     title: "Neuroscientist's Guide To 10X Your Focus & Memory",
     description:
-      "A complete, section-by-section summary of Dr Sahar Yousef on Figuring Out with Raj Shamani (FO559): belief and identity, breaking habits, phones and IQ, multitasking, boredom and ideas, chronotypes, burnout and the 3M break framework, with interactive exercises.",
+      "A to-the-point summary of Dr Sahar Yousef on Figuring Out with Raj Shamani (FO559): belief and identity, breaking habits, phones and IQ, multitasking, boredom and ideas, chronotypes, burnout and the 3M break framework, with interactive exercises.",
     intro:
-      'A complete, section-by-section summary of the full conversation in the order it happened. It covers belief and identity, habits and addiction, phones and IQ, multitasking, boredom and ideas, short vs long-form media, loneliness, the "brain as a city" map, chronotypes and sleep, burnout and the 3M break framework, an unpublished 9-week Berkeley study, and the guest\'s personal story.',
+      'Raj asks a Berkeley neuroscientist how to train focus, memory and motivation. This summary is organized by topic and kept to the point: belief and the identity template, when-then plans, breaking habits, phones and IQ, multitasking, boredom and ideas, short vs long-form media and loneliness, the "brain as a city" map, chronotypes and sleep, burnout and the 3M break framework, an unpublished 9-week Berkeley study, and her personal story.',
     guest: "Dr Sahar Yousef",
     guestBio: 'Cognitive neuroscientist (UC Berkeley, "Becoming Superhuman" lab)',
     host: "Raj Shamani",
