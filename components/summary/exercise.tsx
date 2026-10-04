@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { CheckIcon, CloudAlertIcon, Loader2Icon, LockIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/providers/auth-provider";
+import { useT } from "@/components/providers/locale-provider";
 import { useProgressContext, type SaveStatus } from "@/components/summary/progress-provider";
 import { cn } from "@/lib/utils";
 
@@ -23,31 +24,33 @@ function WidgetTitle({ label, title, aside }: { label: string; title: string; as
 
 /** Public interactive visual that is part of the content (no login needed). */
 export function Widget({ title, children }: { title: string; children: ReactNode }) {
+  const t = useT().widget;
   return (
     <div className="cs-widget">
-      <WidgetTitle label="Interactive" title={title} />
+      <WidgetTitle label={t.interactive} title={title} />
       {children}
     </div>
   );
 }
 
 function SaveIndicator({ status }: { status: SaveStatus }) {
+  const t = useT().widget;
   if (status === "saving")
     return (
       <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-        <Loader2Icon className="size-3 animate-spin" /> Saving
+        <Loader2Icon className="size-3 animate-spin" /> {t.saving}
       </span>
     );
   if (status === "saved")
     return (
       <span className="inline-flex items-center gap-1 text-xs text-good">
-        <CheckIcon className="size-3" /> Saved to your account
+        <CheckIcon className="size-3" /> {t.saved}
       </span>
     );
   if (status === "error")
     return (
       <span className="inline-flex items-center gap-1 text-xs text-bad">
-        <CloudAlertIcon className="size-3" /> Couldn&apos;t save
+        <CloudAlertIcon className="size-3" /> {t.saveError}
       </span>
     );
   return null;
@@ -59,6 +62,7 @@ function SaveIndicator({ status }: { status: SaveStatus }) {
  */
 export function Exercise({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   const { user, isLoading } = useAuth();
+  const t = useT().widget;
   const { loaded, status } = useProgressContext();
   const pathname = usePathname();
   const next = encodeURIComponent(`${pathname}#exercise-${id}`);
@@ -67,7 +71,7 @@ export function Exercise({ id, title, children }: { id: string; title: string; c
   return (
     <div id={`exercise-${id}`} className="cs-widget scroll-mt-32">
       <WidgetTitle
-        label="Exercise"
+        label={t.exercise}
         title={title}
         aside={user ? <SaveIndicator status={status[id] ?? "idle"} /> : null}
       />
@@ -88,18 +92,15 @@ export function Exercise({ id, title, children }: { id: string; title: string; c
                     <LockIcon className="size-5" />
                   </span>
                   <div>
-                    <p className="font-semibold">Log in to follow along</p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Create a free account to do this exercise. Your answers are saved to your account, so you can pick
-                      up where you left off on any device.
-                    </p>
+                    <p className="font-semibold">{t.lockTitle}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{t.lockText}</p>
                   </div>
                   <div className="flex gap-2">
                     <Button size="sm" asChild>
-                      <Link href={`/login?next=${next}`}>Log in</Link>
+                      <Link href={`/login?next=${next}`}>{t.login}</Link>
                     </Button>
                     <Button size="sm" variant="outline" asChild>
-                      <Link href={`/register?next=${next}`}>Create account</Link>
+                      <Link href={`/register?next=${next}`}>{t.register}</Link>
                     </Button>
                   </div>
                 </>

@@ -1,0 +1,139 @@
+import { ActionChecklist, ProjectLadder, RoleQuiz, SkillBuckets } from "@/components/summaries/ai-engineer";
+
+<Section id="tldr" title="पूरा video 60 seconds में">
+<p>Marina Wyss, Twitch में senior applied scientist हैं जो production AI systems बनाती हैं, और उनकी degrees politics में हैं। अगर वो आज zero से शुरू करतीं, तो AI engineer ऐसे बनतीं:</p>
+<ol>
+  <li><b>Role को समझें।</b> AI engineer उन models पर applications बनाता है जिन्हें किसी और ने train किया है (Claude, GPT, Gemini, open-source models)।</li>
+  <li><b>7 skill buckets सीखें</b>: Python, math, ML basics, AI engineering, agents, production और interview prep। हर एक को सिर्फ़ उतना सीखें जितना शुरू करने के लिए काफ़ी हो।</li>
+  <li><b>Ready महसूस करने से पहले build करें।</b> Basics सीखें, project शुरू करें, और जहाँ अटकें वो चीज़ वापस जाकर सीखें।</li>
+  <li><b>एक simple personal project से शुरू करें, फिर उसे production तक ले जाएँ</b>: evals, RAG या tools, deployment और monitoring के साथ।</li>
+  <li><b>किसी और की real problem solve करें</b> ताकि real requirements और users के साथ experience मिले।</li>
+  <li><b>Resume screeners से आगे निकलने के लिए networking करें</b>: कुछ target companies के engineers के साथ असली relationships बनाएँ।</li>
+</ol>
+<KeyPoint><b>"सिर्फ़ API call करना" एक bad AI engineer का काम है</b>एक API call और एक robust AI system (context, retrieval, evals, production) के बीच का gap ही वजह है कि companies को अच्छे लोग नहीं मिलते और salaries इतनी high हैं।</KeyPoint>
+</Section>
+
+<Section id="role" title="AI engineer असल में क्या करता है">
+<p>Job postings में titles आपस में मिल जाते हैं। वो इन्हें ऐसे अलग करती हैं:</p>
+<Grid cols={2}>
+  <Box><h4>AI engineer</h4><b>Pre-trained models</b> पर applications बनाता है: ऐसे systems जो information summarize करें, tasks automate करें या सवालों के जवाब दें।</Box>
+  <Box><h4>ML engineer</h4>Data से <b>custom models train करता है</b>, जैसे Netflix का recommendation system या fraud detection model।</Box>
+  <Box><h4>AI researcher</h4><b>नए तरह के models invent करता है।</b> यह अलग career track है, आमतौर पर PhD के साथ।</Box>
+  <Box><h4>Software engineer</h4>Model के आसपास का <b>interface, API और back-end</b> बनाता है। Model से जुड़ी कोई चीज़ उसकी ज़िम्मेदारी नहीं।</Box>
+</Grid>
+<ul>
+  <li>बहुत सारी companies अपने products में AI integrate करना चाहती हैं, और हैरानी की बात है कि बहुत कम लोग यह अच्छे से कर पाते हैं।</li>
+  <li>आपको AI की हर चीज़ master करने की ज़रूरत नहीं, लेकिन यह पता होना चाहिए कि क्या matter करता है। उस हफ़्ते Reddit या YouTube जो hype करे वही सीखते रहने से बहुत समय बर्बाद होता है।</li>
+</ul>
+
+<RoleQuiz />
+</Section>
+
+<Section id="skills" title="7 skill buckets">
+<h3>1. Python और software engineering</h3>
+<ul>
+  <li><b>Python</b> में सच में अच्छे बनें: functions, classes, data structures, error handling, APIs और third-party libraries के साथ काम करना।</li>
+  <li>साथ में engineering basics सीखें: <b>project structure, Git, virtual environments, config files, tests और command line</b>।</li>
+  <li>Back-end expert बनने की ज़रूरत नहीं। अपने personal projects के लिए वो <b>Supabase</b> (Postgres, auth, APIs, storage) use करती हैं।</li>
+  <li><b>AI के साथ coding का tip:</b> tools किसी model के training data से तेज़ी से बदलते हैं। अपने coding agent को <b>skills</b> दें (सादे markdown instructions) जो उसे live docs check करवाएँ। Skill के बिना Claude Code ने कहा कि schema में कोई performance issue नहीं है; Supabase skill के साथ उसने कई issues पकड़े।</li>
+</ul>
+<h3>2. Math</h3>
+<p>जितना आप सोचते हैं उससे बहुत कम। <b>Linear algebra, probability, statistics और calculus</b> के basics को intuition के रूप में समझें। "आपको कभी भी हाथ से calculation नहीं करनी पड़ेगी, I promise you।"</p>
+<h3>3. Machine learning fundamentals</h3>
+<p>आप scratch से models train नहीं करेंगे, लेकिन ये चीज़ें फिर भी आती हैं: <b>supervised vs unsupervised learning, training और test sets, overfitting और underfitting, precision और recall</b>, साथ में high level पर neural networks और <b>transformers</b>। Goal है models में फ़र्क समझना और सही model चुनना।</p>
+<h3>4. AI engineering fundamentals</h3>
+<ul>
+  <li><b>LLMs:</b> major models को जानें और <b>performance, cost, speed और licensing</b> के आधार पर चुनें।</li>
+  <li><b>Prompt engineering</b>, सही तरीके से: few-shot prompting, structured outputs, defensive prompting, और <b>systematically test करना</b> कि changes से सच में फ़ायदा हुआ या नहीं।</li>
+  <li><b>Context engineering:</b> तय करना कि model क्या देखेगा और जब बहुत ज़्यादा information हो तो क्या छोड़ा जाएगा।</li>
+  <li><b>RAG (retrieval-augmented generation):</b> model को उसके training set के बाहर का data use करने देना, जैसे internal docs। इसमें embeddings, chunking, vector databases और retrieval आते हैं।</li>
+  <li><b>Evaluation:</b> test sets, सही metrics, LLM-as-judge और human evaluation।</li>
+</ul>
+<h3>5. AI agents</h3>
+<p>Agent एक ऐसा LLM है जो <b>functions call कर सकता है और task पूरा होने तक action लेता रहता है</b>: web search, database query, API call, code चलाना। <b>Tool calling</b> सीखें, task completion को evaluate करना सीखें, external tools और data से जुड़ने के लिए <b>MCP (Model Context Protocol)</b>, और आगे चलकर <b>multi-agent systems</b>। हाल में यही area सबसे ज़्यादा बदला है।</p>
+<h3>6. Production engineering और infrastructure</h3>
+<p>आपके laptop पर चलना और real users को handle करना एक बात नहीं है। <b>APIs, cloud platforms, Docker, basic CI/CD, monitoring और logging</b> सीखें। वो इसे सबसे important buckets में से एक मानती हैं, क्योंकि यही एक demo को ऐसी चीज़ में बदलता है जिसे लोग use कर सकें।</p>
+<h3>7. Interview prep</h3>
+<ul>
+  <li>Job करना और interview pass करना दो अलग skills हैं।</li>
+  <li><b>Coding:</b> data structures और algorithms, Python में LeetCode-style problems।</li>
+  <li><b>Gen AI system design:</b> "Twitter design करो" की जगह "एक RAG system design करो" या "एक customer support agent design करो" जो scale पर काम करे, ऐसे सवाल expect करें।</li>
+</ul>
+<Warn><b>Interview prep अभी से, साथ-साथ शुरू करें</b>वरना आप महीनों AI engineering में अच्छे होते रहेंगे और फिर भी असली interview के लिए बिल्कुल तैयार नहीं होंगे।</Warn>
+
+<SkillBuckets />
+</Section>
+
+<Section id="learn" title="Tutorial hell में फँसे बिना कैसे सीखें">
+<KeyPoint><b>Build करने से पहले सारे 7 buckets मत सीखिए</b>लगभग उल्टा करें: एक course, book या video से basics लें, जितनी जल्दी हो सके build करना शुरू करें, और जब project कोई gap दिखाए तब वापस जाकर उसे गहराई से सीखें।</KeyPoint>
+<p>हज़ारों dollars खर्च करने की ज़रूरत नहीं। उनकी picks, ज़्यादातर free:</p>
+<SimpleTable>
+<thead>
+<tr><th>Topic</th><th>Resource</th><th>क्यों</th></tr>
+</thead>
+<tbody>
+  <tr><td><b>Python</b></td><td>Scrimba का Learn Python</td><td>शुरू करना free और interactive, ताकि आप देखें नहीं, code लिखें</td></tr>
+  <tr><td><b>Math</b></td><td>3Blue1Brown: Essence of Linear Algebra, Essence of Calculus</td><td>YouTube पर free, visual intuition बनाता है</td></tr>
+  <tr><td><b>ML basics</b></td><td>Google का Machine Learning Crash Course</td><td>Free, छोटा, core concepts cover करता है</td></tr>
+  <tr><td><b>AI engineering</b></td><td>DeepLearning.AI के short courses (prompting, RAG, agents, MCP)</td><td>कई free हैं; जब project को उस topic की ज़रूरत हो तब उठाएँ</td></tr>
+  <tr><td><b>LLMs गहराई से</b></td><td>Hugging Face LLM course</td><td>Free</td></tr>
+  <tr><td><b>एक book</b></td><td><i>AI Engineering</i> by Chip Huyen</td><td>Foundation models, evals, RAG और production cover करती है, लेकिन MCP और agents पर हाल के काम से पहले की है</td></tr>
+  <tr><td><b>ज़्यादा up to date</b></td><td>The Hitchhiker's Guide to AI Engineering</td><td>Free और ज़्यादा challenging</td></tr>
+</tbody>
+</SimpleTable>
+<p>वो resource चुनें जो अभी आपकी ज़रूरत cover करे, आगे बढ़ने लायक सीखें, फिर जाकर build करें।</p>
+</Section>
+
+<Section id="first-project" title="आपका पहला project: बिल्कुल simple">
+<ul>
+  <li>इसे hiring manager को impress करने, हज़ारों users पाने, fancy agent architecture या original idea की ज़रूरत नहीं। इसे बस <b>आपको शुरू करवाना है</b>।</li>
+  <li>इसका काम है आपको दिखाना कि आप असल में क्या समझते हैं और क्या review करना है।</li>
+  <li>कुछ <b>personal और छोटा</b> चुनें ताकि पहला version जल्दी चल जाए, जैसे एक bot जो आपकी family recipes के scans से dinner suggest करे, या एक daily news brief।</li>
+  <li>Personal connection matter करता है। आप judge कर पाते हैं कि AI अच्छा काम कर रहा है या नहीं, और जब पहले मज़ेदार घंटे debugging में बदलते हैं तब भी आप लगे रहते हैं।</li>
+</ul>
+<Warn><b>इसे हाथ से code करें और थोड़ा struggle करें</b>नए concepts समझने के लिए AI use करें, लेकिन code खुद लिखें। Manager और hiring teams में रहते हुए उन्होंने देखा है कि AI के बाद job market में आए लोग, ready होने से पहले AI पर टिककर, खुद को limit कर लेते हैं।</Warn>
+</Section>
+
+<Section id="advanced-project" title="Level up: इसे production तक ले जाएँ">
+<p>Skills list पर वापस जाएँ और जो छूटा है वो जोड़ें:</p>
+<ul>
+  <li><b>Proper evals बनाएँ</b> ताकि measure कर सकें कि यह सच में काम करता है।</li>
+  <li><b>Context engineering और RAG</b> के साथ experiment करें।</li>
+  <li>अगर problem में fit बैठे तो model को <b>tools दें और agent बनाएँ</b>।</li>
+  <li><b>Deploy करें</b> जहाँ लोग use कर सकें, <b>monitoring और logging</b> के साथ।</li>
+  <li><b>Cost, speed, security</b> के बारे में सोचें, और तब क्या होगा जब real users ऐसे behave करें जिसकी आपने उम्मीद नहीं की थी।</li>
+</ul>
+<p>एक ही project में हर buzzword मत ठूँसिए। Goal है दिखाना कि आप एक AI system को idea से <b>ऐसी reliable चीज़ तक ले जा सकते हैं जिसे लोग use करें</b>।</p>
+
+<ProjectLadder />
+</Section>
+
+<Section id="experience" title="किसी और की problem solve करें">
+<p>Companies skills की list hire नहीं करतीं; वो अपनी problems solve करवाने के लिए लोग hire करती हैं। आपके project ने आपकी problem solve की, तो अगला step है किसी और की problem solve करना, hire होने का इंतज़ार किए बिना:</p>
+<ul>
+  <li>किसी <b>nonprofit</b> के लिए कुछ बनाएँ जो उनका समय बचाए।</li>
+  <li>किसी <b>hobby group</b> के लिए tool बनाएँ जिसमें आप पहले से हैं।</li>
+  <li>किसी <b>दोस्त के small business</b> का कोई irritating process automate करें।</li>
+  <li><b>Open source</b> में contribute करें, experienced लोगों के साथ real problems पर काम करें जो feedback दे सकें।</li>
+</ul>
+<p>रास्ता बहुत matter नहीं करता। जो matter करता है वो है <b>ऐसी requirements जो आपने नहीं बनाईं, ऐसी constraints जो आपने नहीं चुनीं, और ऐसे लोग जो इसे सच में use करें</b>। सही तरीके से किया जाए तो यह आपके resume पर experience के रूप में जा सकता है। वो AI startup शुरू करने को नहीं कह रहीं; बस अपना experience बनाने में creative बनिए।</p>
+</Section>
+
+<Section id="job" title="जब screeners आपको filter कर दें तब job कैसे पाएँ">
+<ul>
+  <li>Relevant degree या engineering experience के बिना, आपका resume अक्सर किसी इंसान के देखने से पहले ही filter हो जाएगा। मतलब <b>LinkedIn पर mass-apply करना शायद काम नहीं करेगा</b>।</li>
+  <li>Networking का मतलब awkward बड़ी conferences नहीं। इसका मतलब है <b>उन companies के लोगों को जानना जहाँ आप काम करना चाहते हैं</b>।</li>
+  <li><b>कुछ companies चुनें।</b> वहाँ के AI engineers, hiring managers या technical लोग ढूँढें जो online post करते हैं, open source में contribute करते हैं, talks देते हैं या कोई और public work है।</li>
+  <li><b>एक normal इंसान की तरह engage करें:</b> उनके बनाए किसी चीज़ के बारे में पूछें, उनके काम से जुड़ी कोई useful चीज़ share करें, या अपना बनाया कुछ relevant दिखाएँ।</li>
+  <li><b>सीधे referral मत माँगिए।</b> इतना असली relationship बनाएँ कि जब कोई role खुले, तो आप हज़ारों resumes के ढेर में कोई random नाम न हों।</li>
+</ul>
+<KeyPoint><b>यह काम कर सकता है</b>उन्हें अपनी पहली internship एक ऐसे देश की company को cold email करके मिली जिसकी भाषा वो नहीं बोलती थीं, जबकि वो बिल्कुल अलग subject पढ़ रही थीं। Traditional background के बिना इस field में आना मुश्किल है, इसलिए creative बनें, हिम्मत करें और खुद को आगे रखें।</KeyPoint>
+</Section>
+
+<Section id="cohort" title="उनका 8-week cohort">
+<p>वो एक छोटा, <b>application-only 8-week cohort</b> चला रही हैं ताकि लोग simple projects से उस level के काम तक पहुँच सकें जो professional AI engineering दिखाए। यह <b>complete beginners के लिए नहीं है</b>: आपको Python और कुछ AI fundamentals में पहले से comfortable होना चाहिए। इसमें project चुनना और scope करना, बनाना और deploy करना शामिल है। Application link video description में है।</p>
+</Section>
+
+<Section id="checklist" title="Action checklist: इस video से आप जो कुछ कर सकते हैं" variant="checklist">
+<ActionChecklist />
+</Section>

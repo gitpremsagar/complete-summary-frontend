@@ -1,0 +1,139 @@
+import { ActionChecklist, ProjectLadder, RoleQuiz, SkillBuckets } from "@/components/summaries/ai-engineer";
+
+<Section id="tldr" title="The whole video in 60 seconds">
+<p>Marina Wyss is a senior applied scientist at Twitch who builds production AI systems, and her degrees are in politics. Here's how she'd become an AI engineer starting from zero today:</p>
+<ol>
+  <li><b>Know the role.</b> An AI engineer builds applications on top of models someone else trained (Claude, GPT, Gemini, open-source models).</li>
+  <li><b>Learn 7 skill buckets</b>: Python, math, ML basics, AI engineering, agents, production and interview prep. Learn each only well enough to start.</li>
+  <li><b>Build before you feel ready.</b> Get the basics, start a project, and go back to learn whatever gets you stuck.</li>
+  <li><b>Start with a simple personal project, then take it to production</b> with evals, RAG or tools, deployment and monitoring.</li>
+  <li><b>Solve someone else's real problem</b> to get experience with real requirements and users.</li>
+  <li><b>Network around the resume screeners</b> by building real relationships with engineers at a few target companies.</li>
+</ol>
+<KeyPoint><b>"Just calling an API" is what a bad AI engineer does</b>The gap between an API call and a robust AI system (context, retrieval, evals, production) is why companies struggle to hire and why the salaries are so high.</KeyPoint>
+</Section>
+
+<Section id="role" title="What an AI engineer actually does">
+<p>Job titles blur together in postings. Here's how she separates them:</p>
+<Grid cols={2}>
+  <Box><h4>AI engineer</h4>Builds applications on top of <b>pre-trained models</b>: systems that summarize information, automate tasks or answer questions.</Box>
+  <Box><h4>ML engineer</h4>Uses data to <b>train custom models</b>, like a Netflix recommendation system or a fraud detection model.</Box>
+  <Box><h4>AI researcher</h4><b>Invents new kinds of models.</b> A separate career track, usually with a PhD.</Box>
+  <Box><h4>Software engineer</h4>Builds the <b>interface, API and back-end</b> around the model. Owns nothing model-specific.</Box>
+</Grid>
+<ul>
+  <li>Lots of companies want to integrate AI into their products, and surprisingly few people can do it well.</li>
+  <li>You don't need to master everything in AI, but you need to know what matters. Learning whatever Reddit or YouTube hypes that week wastes huge amounts of time.</li>
+</ul>
+
+<RoleQuiz />
+</Section>
+
+<Section id="skills" title="The 7 skill buckets">
+<h3>1. Python and software engineering</h3>
+<ul>
+  <li>Get really good at <b>Python</b>: functions, classes, data structures, error handling, working with APIs and third-party libraries.</li>
+  <li>Learn the engineering basics alongside it: <b>project structure, Git, virtual environments, config files, tests and the command line</b>.</li>
+  <li>You don't need to be a back-end expert. She uses <b>Supabase</b> (Postgres, auth, APIs, storage) for her personal projects.</li>
+  <li><b>Tip for coding with AI:</b> tools change faster than a model's training data. Give your coding agent <b>skills</b> (plain markdown instructions) that make it check the live docs. Without one, Claude Code told her a schema had no performance issues; with the Supabase skill, it found several.</li>
+</ul>
+<h3>2. Math</h3>
+<p>Far less than you think. Understand the basics of <b>linear algebra, probability, statistics and calculus</b> as intuition. "You will never need to calculate things by hand, I promise you."</p>
+<h3>3. Machine learning fundamentals</h3>
+<p>You won't train models from scratch, but these come up anyway: <b>supervised vs unsupervised learning, training and test sets, overfitting and underfitting, precision and recall</b>, plus neural networks and <b>transformers</b> at a high level. The goal is to tell models apart and pick the right one.</p>
+<h3>4. AI engineering fundamentals</h3>
+<ul>
+  <li><b>LLMs:</b> know the major models and choose on <b>performance, cost, speed and licensing</b>.</li>
+  <li><b>Prompt engineering</b>, done properly: few-shot prompting, structured outputs, defensive prompting, and <b>systematically testing</b> whether changes help.</li>
+  <li><b>Context engineering:</b> deciding what the model sees and what gets left out when there's too much.</li>
+  <li><b>RAG (retrieval-augmented generation):</b> letting the model use data outside its training set, like internal docs. Covers embeddings, chunking, vector databases and retrieval.</li>
+  <li><b>Evaluation:</b> test sets, the right metrics, LLM-as-judge and human evaluation.</li>
+</ul>
+<h3>5. AI agents</h3>
+<p>An agent is an LLM that can <b>call functions and keep acting until a task is done</b>: search the web, query a database, call an API, run code. Learn <b>tool calling</b>, how to evaluate task completion, <b>MCP (Model Context Protocol)</b> for connecting to external tools and data, and eventually <b>multi-agent systems</b>. This area has changed the most recently.</p>
+<h3>6. Production engineering and infrastructure</h3>
+<p>Working on your laptop isn't the same as handling real users. Learn <b>APIs, cloud platforms, Docker, basic CI/CD, monitoring and logging</b>. She calls this one of the most important buckets, because it's what turns a demo into something people can use.</p>
+<h3>7. Interview prep</h3>
+<ul>
+  <li>Doing the job and passing the interview are different skills.</li>
+  <li><b>Coding:</b> data structures and algorithms, LeetCode-style problems in Python.</li>
+  <li><b>Gen AI system design:</b> instead of "design Twitter," expect "design a RAG system" or "design a customer support agent" that works at scale.</li>
+</ul>
+<Warn><b>Start interview prep now, in parallel</b>Otherwise you can spend months getting good at AI engineering and still be totally unprepared for the actual interview.</Warn>
+
+<SkillBuckets />
+</Section>
+
+<Section id="learn" title="How to learn without getting stuck in tutorial hell">
+<KeyPoint><b>Don't learn all 7 buckets before you build</b>Do almost the opposite: get the basics from one course, book or video, start building as fast as you can, and go back to learn things in depth when the project exposes a gap.</KeyPoint>
+<p>You don't need to spend thousands of dollars. Her picks, mostly free:</p>
+<SimpleTable>
+<thead>
+<tr><th>Topic</th><th>Resource</th><th>Why</th></tr>
+</thead>
+<tbody>
+  <tr><td><b>Python</b></td><td>Scrimba's Learn Python</td><td>Free to start and interactive, so you write code instead of watching</td></tr>
+  <tr><td><b>Math</b></td><td>3Blue1Brown: Essence of Linear Algebra, Essence of Calculus</td><td>Free on YouTube, builds visual intuition</td></tr>
+  <tr><td><b>ML basics</b></td><td>Google's Machine Learning Crash Course</td><td>Free, fairly short, covers the core concepts</td></tr>
+  <tr><td><b>AI engineering</b></td><td>DeepLearning.AI short courses (prompting, RAG, agents, MCP)</td><td>Many are free; pick one up when a project needs that topic</td></tr>
+  <tr><td><b>LLMs in depth</b></td><td>Hugging Face LLM course</td><td>Free</td></tr>
+  <tr><td><b>One book</b></td><td><i>AI Engineering</i> by Chip Huyen</td><td>Covers foundation models, evals, RAG and production, but predates recent work on MCP and agents</td></tr>
+  <tr><td><b>More up to date</b></td><td>The Hitchhiker's Guide to AI Engineering</td><td>Free and more challenging</td></tr>
+</tbody>
+</SimpleTable>
+<p>Pick the resource that covers what you need right now, learn enough to get moving, then go build.</p>
+</Section>
+
+<Section id="first-project" title="Your first project: really simple">
+<ul>
+  <li>It doesn't need to impress a hiring manager, have thousands of users, use a fancy agent architecture or be an original idea. It just needs to <b>get you started</b>.</li>
+  <li>Its job is to show you what you actually understand and what you need to review.</li>
+  <li>Pick something <b>personal and small</b> enough to get a first version working quickly, like a bot that suggests dinners from scans of your family recipes, or a daily news brief.</li>
+  <li>A personal connection matters. You can judge whether the AI is doing a good job, and you'll keep going once the fun first hours turn into debugging.</li>
+</ul>
+<Warn><b>Code it by hand and struggle a bit</b>Use AI to explain new concepts, but write the code yourself. As a manager and on hiring teams, she's seen people who joined the job market post-AI limit themselves by leaning on AI before they're ready.</Warn>
+</Section>
+
+<Section id="advanced-project" title="Level up: take it to production">
+<p>Go back to the skills list and add whatever you missed:</p>
+<ul>
+  <li><b>Build proper evals</b> to measure whether it actually works.</li>
+  <li>Experiment with <b>context engineering and RAG</b>.</li>
+  <li>Give the model <b>tools and make it an agent</b>, if the problem calls for it.</li>
+  <li><b>Deploy it</b> where people can use it, with <b>monitoring and logging</b>.</li>
+  <li>Think about <b>cost, speed, security</b>, and what happens when real users behave in ways you didn't expect.</li>
+</ul>
+<p>Don't cram every buzzword into one project. The goal is to show you can take an AI system from an idea to <b>something reliable that people use</b>.</p>
+
+<ProjectLadder />
+</Section>
+
+<Section id="experience" title="Solve someone else's problem">
+<p>Companies don't hire a list of skills; they hire people to solve their problems. Your project solved your own problem, so the next step is solving someone else's, without waiting to be hired:</p>
+<ul>
+  <li>Build something that saves time for a <b>nonprofit</b>.</li>
+  <li>Build a tool for a <b>hobby group</b> you're already in.</li>
+  <li>Automate an annoying process for a <b>friend's small business</b>.</li>
+  <li>Contribute to <b>open source</b>, working on real problems with experienced people who can give feedback.</li>
+</ul>
+<p>The route doesn't matter much. What counts is working with <b>requirements you didn't make up, constraints you didn't choose and people who actually use it</b>. Done right, it can go on your resume as experience. She's not telling you to start an AI startup; just be creative about making your own experience.</p>
+</Section>
+
+<Section id="job" title="Getting hired when screeners filter you out">
+<ul>
+  <li>Without a relevant degree or engineering experience, your resume will often be filtered out before a human sees it. That means <b>mass-applying on LinkedIn probably won't work</b>.</li>
+  <li>Networking doesn't mean awkward giant conferences. It means <b>getting to know people at companies you want to work for</b>.</li>
+  <li><b>Pick a handful of companies.</b> Find AI engineers, hiring managers or technical people there who post online, contribute to open source, give talks or have other public work.</li>
+  <li><b>Engage like a normal person:</b> ask about something they built, share something useful related to their work, or show them something relevant you've built.</li>
+  <li><b>Don't ask for a referral straight away.</b> Build a real enough relationship that when a role opens, you're not a random resume in a pile of thousands.</li>
+</ul>
+<KeyPoint><b>It can work</b>She got her first internship by cold-emailing a company in a country whose language she didn't speak, while studying something completely unrelated. Breaking in without a traditional background is hard, so get creative, be brave and put yourself out there.</KeyPoint>
+</Section>
+
+<Section id="cohort" title="Her 8-week cohort">
+<p>She's running a small, <b>application-only 8-week cohort</b> to help people make the jump from simple projects to work that shows professional AI engineering. It's <b>not for complete beginners</b>: you should already be comfortable with Python and some AI fundamentals. It covers choosing and scoping a project, building it and deploying it. The application link is in the video description.</p>
+</Section>
+
+<Section id="checklist" title="Action checklist: everything you can do from this video" variant="checklist">
+<ActionChecklist />
+</Section>

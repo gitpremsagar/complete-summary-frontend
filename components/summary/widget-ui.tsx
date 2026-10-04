@@ -2,6 +2,7 @@
 
 import { useId, useState, type ComponentProps, type ReactNode } from "react";
 import { CheckIcon, CopyIcon } from "lucide-react";
+import { useT } from "@/components/providers/locale-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -104,6 +105,7 @@ export function Output({ className, ...props }: ComponentProps<"div">) {
 }
 
 export function CopyButton({ text }: { text: string }) {
+  const t = useT();
   const [copied, setCopied] = useState(false);
   return (
     <Button
@@ -118,7 +120,7 @@ export function CopyButton({ text }: { text: string }) {
       }}
     >
       {copied ? <CheckIcon /> : <CopyIcon />}
-      {copied ? "Copied!" : "Copy"}
+      {copied ? t.widget.copied : t.widget.copy}
     </Button>
   );
 }

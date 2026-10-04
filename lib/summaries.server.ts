@@ -2,6 +2,7 @@ import "server-only";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
+import type { Locale } from "@/lib/i18n";
 import type { SummarySection } from "@/lib/summaries";
 
 export interface SummaryOutline {
@@ -21,9 +22,13 @@ function decodeEntities(text: string) {
     .replace(/&nbsp;/g, " ");
 }
 
+export function summaryContentDir(locale: Locale) {
+  return locale === "hi" ? "hi/" : "";
+}
+
 /** Reads the MDX source at build time to derive the table of contents and reading time. */
-export const getSummaryOutline = cache(async (slug: string): Promise<SummaryOutline> => {
-  const file = path.join(process.cwd(), "content", "summaries", `${slug}.mdx`);
+export const getSummaryOutline = cache(async (slug: string, locale: Locale = "en"): Promise<SummaryOutline> => {
+  const file = path.join(process.cwd(), "content", "summaries", summaryContentDir(locale), `${slug}.mdx`);
   const source = await readFile(file, "utf8");
 
   const sections = [...source.matchAll(/<Section\s+id="([^"]+)"\s+title="([^"]+)"/g)].map((m) => ({

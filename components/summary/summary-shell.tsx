@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type MouseEvent, type ReactNo
 import { ArrowUpIcon, ListIcon, SearchIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useT } from "@/components/providers/locale-provider";
 import { cn } from "@/lib/utils";
 import type { SummarySection } from "@/lib/summaries";
 
@@ -42,6 +43,7 @@ export function SummaryShell({
   searchExamples: string[];
   children: ReactNode;
 }) {
+  const t = useT().shell;
   const articleRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const tocRef = useRef<HTMLElement>(null);
@@ -182,7 +184,7 @@ export function SummaryShell({
         )}
         <nav
           ref={tocRef}
-          aria-label="Contents"
+          aria-label={t.contents}
           className={cn(
             "cs-no-print fixed top-14 bottom-0 left-0 z-70 w-[290px] -translate-x-full overflow-y-auto border-r bg-background px-3.5 pt-4 pb-10 transition-transform duration-200",
             "lg:sticky lg:z-auto lg:h-[calc(100vh-3.5rem)] lg:w-auto lg:translate-x-0",
@@ -190,10 +192,10 @@ export function SummaryShell({
           )}
         >
           <div className="mb-2.5 flex items-center justify-between">
-            <h2 className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">Contents</h2>
+            <h2 className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">{t.contents}</h2>
             <Button variant="ghost" size="icon" className="size-7 lg:hidden" onClick={() => setTocOpen(false)}>
               <XIcon />
-              <span className="sr-only">Close contents</span>
+              <span className="sr-only">{t.closeContents}</span>
             </Button>
           </div>
           <ol className="flex flex-col gap-0.5">
@@ -224,7 +226,7 @@ export function SummaryShell({
           <div className="cs-no-print sticky top-14 z-40 -mx-3.5 mb-5 flex flex-wrap items-center gap-2 border-b bg-background/90 px-3.5 py-2.5 backdrop-blur md:-mx-10 md:px-10">
             <Button variant="outline" size="sm" className="lg:hidden" onClick={() => setTocOpen(true)}>
               <ListIcon />
-              Contents
+              {t.contents}
             </Button>
             <div className="relative min-w-[200px] flex-1">
               <SearchIcon className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -236,28 +238,26 @@ export function SummaryShell({
                   if (e.key === "Enter") scrollToFirstMatch();
                   if (e.key === "Escape") setQuery("");
                 }}
-                placeholder={`Search this summary (e.g. ${searchExamples.join(", ")})...`}
-                aria-label="Search this summary"
+                placeholder={t.searchPlaceholder(searchExamples.join(", "))}
+                aria-label={t.search}
                 className="pl-8"
               />
             </div>
             {result && (
               <span className="text-xs whitespace-nowrap text-muted-foreground" aria-live="polite">
-                {result.total
-                  ? `${result.total} match${result.total > 1 ? "es" : ""} in ${result.sections.size} section${result.sections.size > 1 ? "s" : ""}`
-                  : "No matches"}
+                {result.total ? t.matches(result.total, result.sections.size) : t.noMatches}
               </span>
             )}
             <Button variant="outline" size="sm" onClick={() => setAll(false)}>
-              Expand all
+              {t.expandAll}
             </Button>
             <Button variant="outline" size="sm" onClick={() => setAll(true)}>
-              Collapse all
+              {t.collapseAll}
             </Button>
             {hasChecklist && (
               <Button variant="outline" size="sm" asChild>
                 <a href="#checklist" onClick={() => openSection("checklist")}>
-                  Action checklist
+                  {t.checklist}
                 </a>
               </Button>
             )}
@@ -275,7 +275,7 @@ export function SummaryShell({
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         >
           <ArrowUpIcon />
-          Top
+          {t.top}
         </Button>
       )}
     </>

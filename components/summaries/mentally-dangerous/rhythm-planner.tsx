@@ -2,6 +2,7 @@
 
 import { useId } from "react";
 import { Input } from "@/components/ui/input";
+import { useLocalized } from "@/components/providers/locale-provider";
 import { Exercise } from "@/components/summary/exercise";
 import { useExerciseProgress } from "@/components/summary/progress-provider";
 import { Output } from "@/components/summary/widget-ui";
@@ -39,6 +40,61 @@ function formatHours(minutes: number) {
   return m ? `${h} h ${m} min` : `${h} h`;
 }
 
+const TEXT = {
+  en: {
+    title: "Plan your cortisol day",
+    intro: (
+      <>
+        &quot;Morning&quot; means the first hour or two after <i>you</i> wake up, not a clock time. Enter your natural
+        schedule and get your personal plan.
+      </>
+    ),
+    wakeLabel: "I usually wake up at",
+    bedLabel: "I usually go to sleep at",
+    range: (a: string, b: string) => `${a} to ${b}`,
+    until: (a: string) => `Until ${a}`,
+    skip: "Skip it",
+    morning:
+      "Get outside: 5-10 minutes of sunlight in your eyes (no sunglasses), or a 10,000 lux light. Hydrate, have your tea or coffee, move a little. No phone in bed.",
+    exercise: "Best window for exercise (the first half of your day).",
+    caffeineOk: "Caffeine is fine. After this, stop: no caffeine in the 8 hours before sleep.",
+    caffeineNone: "Your day is shorter than 8 hours, so there's no safe caffeine window.",
+    finalHour: "Final hour: dim the lights, cool down, a few long exhales. Learn to turn your mind off.",
+    bands: { sunlight: "Sunlight", exercise: "Exercise", caffeine: "Caffeine OK", dim: "Dim lights" },
+    wake: "Wake",
+    sleep: "Sleep",
+    inBed: (h: string) => `That's ${h} in bed.`,
+    shortSleep: " Huberman's baseline assumes 6 to 8 hours.",
+    empty: "Enter both times to see your plan.",
+  },
+  hi: {
+    title: "अपने cortisol day का plan बनाएँ",
+    intro: (
+      <>
+        &quot;सुबह&quot; का मतलब है <i>आपके</i> जागने के बाद का पहला एक-दो घंटा, कोई clock time नहीं। अपना natural
+        schedule डालें और अपना personal plan पाएँ।
+      </>
+    ),
+    wakeLabel: "मैं आमतौर पर इस समय उठता हूँ",
+    bedLabel: "मैं आमतौर पर इस समय सोता हूँ",
+    range: (a: string, b: string) => `${a} से ${b}`,
+    until: (a: string) => `${a} तक`,
+    skip: "छोड़ दें",
+    morning:
+      "बाहर जाएँ: 5-10 minutes आँखों में sunlight (बिना sunglasses), या 10,000 lux light। पानी पिएँ, chai या coffee लें, थोड़ा move करें। बिस्तर में phone नहीं।",
+    exercise: "Exercise के लिए best window (आपके दिन का पहला हिस्सा)।",
+    caffeineOk: "Caffeine ठीक है। इसके बाद बंद: सोने से पहले के 8 घंटों में caffeine नहीं।",
+    caffeineNone: "आपका दिन 8 घंटे से छोटा है, इसलिए caffeine के लिए कोई safe window नहीं।",
+    finalHour: "आख़िरी घंटा: lights dim करें, ठंडे हों, कुछ long exhales। Mind off करना सीखें।",
+    bands: { sunlight: "Sunlight", exercise: "Exercise", caffeine: "Caffeine OK", dim: "Dim lights" },
+    wake: "उठना",
+    sleep: "सोना",
+    inBed: (h: string) => `यानी बिस्तर में ${h}।`,
+    shortSleep: " Huberman का baseline 6 से 8 घंटे मानता है।",
+    empty: "अपना plan देखने के लिए दोनों समय डालें।",
+  },
+};
+
 function TimeField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   const id = useId();
   return (
@@ -59,6 +115,7 @@ interface Band {
 }
 
 export function RhythmPlanner() {
+  const t = useLocalized(TEXT);
   const [state, setState] = useExerciseProgress<State>("daily-rhythm", INITIAL);
   const wake = toMinutes(state.wake);
   const bedRaw = toMinutes(state.bed);
@@ -74,40 +131,29 @@ export function RhythmPlanner() {
       awake,
       sleep: DAY - awake,
       rows: [
+        [t.range(formatTime(wake), formatTime(wake + 60)), t.morning],
+        [t.range(formatTime(wake), formatTime(midday)), t.exercise],
         [
-          `${formatTime(wake)} to ${formatTime(wake + 60)}`,
-          "Get outside: 5-10 minutes of sunlight in your eyes (no sunglasses), or a 10,000 lux light. Hydrate, have your tea or coffee, move a little. No phone in bed.",
+          caffeineCutoff > wake ? t.until(formatTime(caffeineCutoff)) : t.skip,
+          caffeineCutoff > wake ? t.caffeineOk : t.caffeineNone,
         ],
-        [`${formatTime(wake)} to ${formatTime(midday)}`, "Best window for exercise (the first half of your day)."],
-        [
-          caffeineCutoff > wake ? `Until ${formatTime(caffeineCutoff)}` : "Skip it",
-          caffeineCutoff > wake
-            ? "Caffeine is fine. After this, stop: no caffeine in the 8 hours before sleep."
-            : "Your day is shorter than 8 hours, so there's no safe caffeine window.",
-        ],
-        [
-          `${formatTime(dimLights)} to ${formatTime(bed)}`,
-          "Final hour: dim the lights, cool down, a few long exhales. Learn to turn your mind off.",
-        ],
+        [t.range(formatTime(dimLights), formatTime(bed)), t.finalHour],
       ],
       bands: [
-        { label: "Sunlight", start: wake, end: wake + 60, className: "bg-warn" },
-        { label: "Exercise", start: wake, end: midday, className: "bg-good/70" },
-        { label: "Caffeine OK", start: wake, end: Math.max(wake, caffeineCutoff), className: "bg-brand/70" },
-        { label: "Dim lights", start: dimLights, end: bed, className: "bg-foreground/70" },
+        { label: t.bands.sunlight, start: wake, end: wake + 60, className: "bg-warn" },
+        { label: t.bands.exercise, start: wake, end: midday, className: "bg-good/70" },
+        { label: t.bands.caffeine, start: wake, end: Math.max(wake, caffeineCutoff), className: "bg-brand/70" },
+        { label: t.bands.dim, start: dimLights, end: bed, className: "bg-foreground/70" },
       ],
     };
   }
 
   return (
-    <Exercise id="daily-rhythm" title="Plan your cortisol day">
-      <p className="mt-0! text-[13px] text-muted-foreground">
-        &quot;Morning&quot; means the first hour or two after <i>you</i> wake up, not a clock time. Enter your natural
-        schedule and get your personal plan.
-      </p>
+    <Exercise id="daily-rhythm" title={t.title}>
+      <p className="mt-0! text-[13px] text-muted-foreground">{t.intro}</p>
       <div className="grid gap-3 sm:grid-cols-2">
-        <TimeField label="I usually wake up at" value={state.wake} onChange={(wake) => setState((p) => ({ ...p, wake }))} />
-        <TimeField label="I usually go to sleep at" value={state.bed} onChange={(bed) => setState((p) => ({ ...p, bed }))} />
+        <TimeField label={t.wakeLabel} value={state.wake} onChange={(wake) => setState((p) => ({ ...p, wake }))} />
+        <TimeField label={t.bedLabel} value={state.bed} onChange={(bed) => setState((p) => ({ ...p, bed }))} />
       </div>
 
       {plan ? (
@@ -129,8 +175,12 @@ export function RhythmPlanner() {
               );
             })}
             <div className="flex justify-between pl-22 text-[11px] text-muted-foreground">
-              <span>Wake {formatTime(wake ?? 0)}</span>
-              <span>Sleep {formatTime((wake ?? 0) + plan.awake)}</span>
+              <span>
+                {t.wake} {formatTime(wake ?? 0)}
+              </span>
+              <span>
+                {t.sleep} {formatTime((wake ?? 0) + plan.awake)}
+              </span>
             </div>
           </div>
           <Output>
@@ -142,13 +192,13 @@ export function RhythmPlanner() {
               ))}
             </ul>
             <p className={cn("mt-3! mb-0! text-[13px]", plan.sleep < 6 * 60 ? "text-bad" : "text-muted-foreground")}>
-              That&apos;s {formatHours(plan.sleep)} in bed.
-              {plan.sleep < 6 * 60 && " Huberman's baseline assumes 6 to 8 hours."}
+              {t.inBed(formatHours(plan.sleep))}
+              {plan.sleep < 6 * 60 && t.shortSleep}
             </p>
           </Output>
         </>
       ) : (
-        <Output>Enter both times to see your plan.</Output>
+        <Output>{t.empty}</Output>
       )}
     </Exercise>
   );

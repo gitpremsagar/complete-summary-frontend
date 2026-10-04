@@ -3,29 +3,28 @@ import { notFound } from "next/navigation";
 import { ProgressProvider } from "@/components/summary/progress-provider";
 import { SummaryHero } from "@/components/summary/summary-hero";
 import { SummaryShell } from "@/components/summary/summary-shell";
-import { getSummary, summaries, summaryPath } from "@/lib/summaries";
+import { getDictionary } from "@/lib/dictionaries";
+import type { Locale } from "@/lib/i18n";
+import { getSummary, localizeSummary, summaryPath } from "@/lib/summaries";
 import { getSummaryOutline } from "@/lib/summaries.server";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "@/components/summary/summary.css";
 
-export const dynamicParams = false;
+export function summaryMetadata(slug: string, locale: Locale): Metadata {
+  const base = getSummary(slug);
+  if (!base) return {};
+  const summary = localizeSummary(base, locale);
 
-export function generateStaticParams() {
-  return summaries.map((s) => ({ slug: s.slug }));
-}
-
-export async function generateMetadata({ params }: PageProps<"/summaries/[slug]">): Promise<Metadata> {
-  const { slug } = await params;
-  const summary = getSummary(slug);
-  if (!summary) return {};
-
-  const title = `${summary.title}: complete summary`;
-  const url = summaryPath(slug);
+  const title = `${summary.title}: ${getDictionary(locale).hero.metaSuffix}`;
+  const url = summaryPath(slug, locale);
   return {
     title,
     description: summary.description,
     keywords: summary.tags,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      languages: { en: summaryPath(slug, "en"), hi: summaryPath(slug, "hi"), "x-default": summaryPath(slug, "en") },
+    },
     authors: [{ name: SITE_NAME }],
     openGraph: {
       type: "article",
@@ -33,6 +32,7 @@ export async function generateMetadata({ params }: PageProps<"/summaries/[slug]"
       title,
       description: summary.description,
       siteName: SITE_NAME,
+      locale: locale === "hi" ? "hi_IN" : "en_US",
       publishedTime: summary.publishedAt,
       modifiedTime: summary.updatedAt ?? summary.publishedAt,
       tags: summary.tags,
@@ -41,14 +41,14 @@ export async function generateMetadata({ params }: PageProps<"/summaries/[slug]"
   };
 }
 
-export default async function SummaryPage({ params }: PageProps<"/summaries/[slug]">) {
-  const { slug } = await params;
-  const summary = getSummary(slug);
-  if (!summary) notFound();
+export async function SummaryView({ slug, locale }: { slug: string; locale: Locale }) {
+  const base = getSummary(slug);
+  if (!base) notFound();
+  const summary = localizeSummary(base, locale);
 
   const [{ default: Content }, outline] = await Promise.all([
-    import(`@/content/summaries/${slug}.mdx`),
-    getSummaryOutline(slug),
+    locale === "hi" ? import(`@/content/summaries/hi/${slug}.mdx`) : import(`@/content/summaries/${slug}.mdx`),
+    getSummaryOutline(slug, locale),
   ]);
 
   const jsonLd = {
@@ -56,7 +56,8 @@ export default async function SummaryPage({ params }: PageProps<"/summaries/[slu
     "@type": "Article",
     headline: summary.title,
     description: summary.description,
-    url: `${SITE_URL}${summaryPath(slug)}`,
+    inLanguage: locale,
+    url: `${SITE_URL}${summaryPath(slug, locale)}`,
     datePublished: summary.publishedAt,
     dateModified: summary.updatedAt ?? summary.publishedAt,
     keywords: summary.tags.join(", "),
@@ -85,7 +86,7 @@ export default async function SummaryPage({ params }: PageProps<"/summaries/[slu
         <SummaryShell
           sections={outline.sections}
           searchExamples={summary.searchExamples ?? summary.tags.slice(0, 3)}
-          hero={<SummaryHero summary={summary} readingMinutes={outline.readingMinutes} />}
+          hero={<SummaryHero summary={summary} readingMinutes={outline.readingMinutes} locale={locale} />}
         >
           <Content />
         </SummaryShell>

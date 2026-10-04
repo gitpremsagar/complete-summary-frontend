@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useLocalized } from "@/components/providers/locale-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Exercise } from "@/components/summary/exercise";
@@ -34,12 +35,55 @@ interface Game {
 }
 const IDLE: Game = { round: 0, idx: 0, errors: 0, start: null, done: false };
 
+const TEXT = {
+  en: {
+    title: "Try the multitasking test yourself (keyboard version)",
+    intro:
+      'Type each highlighted item (letter or number) in the box. It advances automatically when correct; wrong keys count as mistakes. Round 1 is sequential; round 2 alternates letter, number, letter, number. "IAMAGREATMULTITASKER" has exactly 20 letters, one for each number.',
+    start1: "Start Round 1 (sequential)",
+    start2: "Start Round 2 (alternating)",
+    reset: "Reset",
+    placeholder: "type here",
+    inputLabel: "Type the highlighted item",
+    rows: ["Raj: sequential", "Raj: alternating", "You: sequential", "You: alternating"],
+    notYet: "not yet",
+    mistakes: (r1: number | string, r2: number | string) => `Your mistakes: round 1 = ${r1}, round 2 = ${r2}`,
+    idle: "Press a start button.",
+    round1: "Round 1: type the letters, then the numbers. The timer starts on your first key.",
+    round2: "Round 2: alternate letter, number, letter, number... The timer starts on your first key.",
+    done: (round: number, time: string, errors: number) =>
+      `Round ${round} done in ${time}s with ${errors} mistake${errors === 1 ? "" : "s"}.`,
+    cost: (ratio: string) => ` Switching cost you ${ratio}x the time (Raj: 2.33x).`,
+    next: " Now try Round 2.",
+  },
+  hi: {
+    title: "Multitasking test ख़ुद आज़माएँ (keyboard version)",
+    intro:
+      'हर highlighted item (letter या number) box में type करें। सही होने पर यह अपने आप आगे बढ़ता है; ग़लत keys mistakes गिनी जाती हैं। Round 1 sequential है; round 2 में letter, number, letter, number बारी-बारी से आते हैं। "IAMAGREATMULTITASKER" में ठीक 20 letters हैं, हर number के लिए एक।',
+    start1: "Round 1 शुरू करें (sequential)",
+    start2: "Round 2 शुरू करें (alternating)",
+    reset: "Reset",
+    placeholder: "यहाँ type करें",
+    inputLabel: "Highlighted item type करें",
+    rows: ["Raj: sequential", "Raj: alternating", "आप: sequential", "आप: alternating"],
+    notYet: "अभी नहीं",
+    mistakes: (r1: number | string, r2: number | string) => `आपकी mistakes: round 1 = ${r1}, round 2 = ${r2}`,
+    idle: "कोई start button दबाएँ।",
+    round1: "Round 1: पहले letters, फिर numbers type करें। Timer आपकी पहली key से शुरू होगा।",
+    round2: "Round 2: letter, number, letter, number बारी-बारी से... Timer आपकी पहली key से शुरू होगा।",
+    done: (round: number, time: string, errors: number) => `Round ${round}, ${time}s में ${errors} mistakes के साथ पूरा।`,
+    cost: (ratio: string) => ` Switching से आपको ${ratio}x समय लगा (Raj: 2.33x)।`,
+    next: " अब Round 2 आज़माएँ।",
+  },
+};
+
 function Bars({ results }: { results: Results }) {
+  const t = useLocalized(TEXT);
   const rows: [string, number | undefined, boolean][] = [
-    ["Raj: sequential", RAJ.r1, false],
-    ["Raj: alternating", RAJ.r2, true],
-    ["You: sequential", results.r1?.t, false],
-    ["You: alternating", results.r2?.t, true],
+    [t.rows[0], RAJ.r1, false],
+    [t.rows[1], RAJ.r2, true],
+    [t.rows[2], results.r1?.t, false],
+    [t.rows[3], results.r2?.t, true],
   ];
   const max = Math.max(...rows.map((r) => r[1] ?? 0));
   return (
@@ -58,20 +102,19 @@ function Bars({ results }: { results: Results }) {
               {value}s
             </div>
           ) : (
-            <span className="text-[13px] text-muted-foreground">not yet</span>
+            <span className="text-[13px] text-muted-foreground">{t.notYet}</span>
           )}
         </div>
       ))}
       {(results.r1 || results.r2) && (
-        <div className="text-[13px] text-muted-foreground">
-          Your mistakes: round 1 = {results.r1?.e ?? "-"}, round 2 = {results.r2?.e ?? "-"}
-        </div>
+        <div className="text-[13px] text-muted-foreground">{t.mistakes(results.r1?.e ?? "-", results.r2?.e ?? "-")}</div>
       )}
     </div>
   );
 }
 
 export function MultitaskTest() {
+  const text = useLocalized(TEXT);
   const [results, setResults, resetResults] = useExerciseProgress<Results>("multitask-test", INITIAL);
   const [game, setGame] = useState<Game>(IDLE);
   const [input, setInput] = useState("");
@@ -141,36 +184,29 @@ export function MultitaskTest() {
     if (timerRef.current) timerRef.current.textContent = "0.00s";
   }
 
-  let status = "Press a start button.";
+  let status = text.idle;
   if (game.round && !game.done) {
-    status =
-      game.round === 1
-        ? "Round 1: type the letters, then the numbers. The timer starts on your first key."
-        : "Round 2: alternate letter, number, letter, number... The timer starts on your first key.";
+    status = game.round === 1 ? text.round1 : text.round2;
   } else if (game.done && finalTime !== null) {
-    status = `Round ${game.round} done in ${finalTime.toFixed(2)}s with ${game.errors} mistake${game.errors === 1 ? "" : "s"}.`;
+    status = text.done(game.round, finalTime.toFixed(2), game.errors);
     const r1 = game.round === 1 ? finalTime : results.r1?.t;
     const r2 = game.round === 2 ? finalTime : results.r2?.t;
-    if (r1 && r2) status += ` Switching cost you ${(r2 / r1).toFixed(2)}x the time (Raj: 2.33x).`;
-    else if (game.round === 1) status += " Now try Round 2.";
+    if (r1 && r2) status += text.cost((r2 / r1).toFixed(2));
+    else if (game.round === 1) status += text.next;
   }
 
   return (
-    <Exercise id="multitask-test" title="Try the multitasking test yourself (keyboard version)">
-      <p className="mt-0! text-[13px] text-muted-foreground">
-        Type each highlighted item (letter or number) in the box. It advances automatically when correct; wrong keys
-        count as mistakes. Round 1 is sequential; round 2 alternates letter, number, letter, number.
-        &quot;IAMAGREATMULTITASKER&quot; has exactly 20 letters, one for each number.
-      </p>
+    <Exercise id="multitask-test" title={text.title}>
+      <p className="mt-0! text-[13px] text-muted-foreground">{text.intro}</p>
       <div className="mt-2.5 flex flex-wrap gap-2">
         <Button type="button" onClick={() => startRound(1)}>
-          Start Round 1 (sequential)
+          {text.start1}
         </Button>
         <Button type="button" variant="outline" onClick={() => startRound(2)}>
-          Start Round 2 (alternating)
+          {text.start2}
         </Button>
         <Button type="button" variant="ghost" onClick={reset}>
-          Reset
+          {text.reset}
         </Button>
       </div>
       <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2">
@@ -206,8 +242,8 @@ export function MultitaskTest() {
         disabled={!game.round || game.done}
         autoComplete="off"
         autoCapitalize="characters"
-        placeholder="type here"
-        aria-label="Type the highlighted item"
+        placeholder={text.placeholder}
+        aria-label={text.inputLabel}
         className={cn(
           "mt-2.5 h-12 bg-card text-center text-[22px]! tracking-[3px]",
           flash && "border-bad bg-bad/20",
