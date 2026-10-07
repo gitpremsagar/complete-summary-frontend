@@ -1,4 +1,5 @@
 import { ClockIcon } from "lucide-react";
+import { EngagementBar } from "@/components/summary/engagement-bar";
 import { YouTubeEmbed } from "@/components/summary/youtube-embed";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/lib/i18n";
@@ -51,6 +52,7 @@ export function SummaryHero({
           </>
         )}
       </p>
+      <EngagementBar />
       {summary.youtubeId && (
         <div className="mt-5">
           <YouTubeEmbed id={summary.youtubeId} title={summary.title} />

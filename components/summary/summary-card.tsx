@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRightIcon, ClockIcon } from "lucide-react";
+import { CardStats } from "@/components/summary/card-stats";
 import { getDictionary } from "@/lib/dictionaries";
 import type { Locale } from "@/lib/i18n";
 import { summaryPath, type SummaryMeta } from "@/lib/summaries";
@@ -62,6 +63,7 @@ export function SummaryCard({
             </li>
           ))}
         </ul>
+        <CardStats slug={summary.slug} />
         <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-medium text-brand">
           {t.card.read}
           <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />

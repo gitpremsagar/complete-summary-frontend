@@ -36,11 +36,13 @@ export function SummaryShell({
   sections,
   hero,
   searchExamples,
+  footer,
   children,
 }: {
   sections: SummarySection[];
   hero: ReactNode;
   searchExamples: string[];
+  footer?: ReactNode;
   children: ReactNode;
 }) {
   const t = useT().shell;
@@ -266,6 +268,7 @@ export function SummaryShell({
           <div ref={articleRef} className="cs-article" onClick={onArticleClick}>
             {children}
           </div>
+          {footer}
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BookOpenTextIcon, ListChecksIcon, SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EngagementStatsProvider } from "@/components/summary/engagement-stats-provider";
 import { SummaryCard } from "@/components/summary/summary-card";
 import { getDictionary } from "@/lib/dictionaries";
 import { localePath, type Locale } from "@/lib/i18n";
@@ -56,16 +57,18 @@ export async function HomeView({ locale }: { locale: Locale }) {
             {t.home.viewAll}
           </Link>
         </div>
-        <div className="grid gap-5 md:grid-cols-2">
-          {latest.slice(0, 6).map((summary, i) => (
-            <SummaryCard
-              key={summary.slug}
-              summary={localizeSummary(summary, locale)}
-              readingMinutes={outlines[i].readingMinutes}
-              locale={locale}
-            />
-          ))}
-        </div>
+        <EngagementStatsProvider slugs={latest.slice(0, 6).map((s) => s.slug)}>
+          <div className="grid gap-5 md:grid-cols-2">
+            {latest.slice(0, 6).map((summary, i) => (
+              <SummaryCard
+                key={summary.slug}
+                summary={localizeSummary(summary, locale)}
+                readingMinutes={outlines[i].readingMinutes}
+                locale={locale}
+              />
+            ))}
+          </div>
+        </EngagementStatsProvider>
       </section>
     </main>
   );

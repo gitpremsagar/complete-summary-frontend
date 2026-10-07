@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CommentsSection } from "@/components/summary/comments-section";
+import { EngagementProvider } from "@/components/summary/engagement-provider";
 import { ProgressProvider } from "@/components/summary/progress-provider";
 import { SummaryHero } from "@/components/summary/summary-hero";
 import { SummaryShell } from "@/components/summary/summary-shell";
@@ -82,15 +84,18 @@ export async function SummaryView({ slug, locale }: { slug: string; locale: Loca
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
-      <ProgressProvider slug={slug}>
-        <SummaryShell
-          sections={outline.sections}
-          searchExamples={summary.searchExamples ?? summary.tags.slice(0, 3)}
-          hero={<SummaryHero summary={summary} readingMinutes={outline.readingMinutes} locale={locale} />}
-        >
-          <Content />
-        </SummaryShell>
-      </ProgressProvider>
+      <EngagementProvider slug={slug}>
+        <ProgressProvider slug={slug}>
+          <SummaryShell
+            sections={outline.sections}
+            searchExamples={summary.searchExamples ?? summary.tags.slice(0, 3)}
+            hero={<SummaryHero summary={summary} readingMinutes={outline.readingMinutes} locale={locale} />}
+            footer={<CommentsSection />}
+          >
+            <Content />
+          </SummaryShell>
+        </ProgressProvider>
+      </EngagementProvider>
     </main>
   );
 }
