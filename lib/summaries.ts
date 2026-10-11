@@ -244,6 +244,70 @@ export const summaries: SummaryMeta[] = [
       ],
     },
   },
+  {
+    slug: "cursor-deep-dive-senior-engineers-10x-productivity",
+    kind: "Video",
+    title: "Cursor Deep Dive: How Senior Engineers Actually Use Cursor for 10x Productivity",
+    description:
+      "A to-the-point summary of ByteMonk's Cursor deep dive: the new-hire mental model, Tab vs Command K vs chat, @ context, plan mode then agent mode, rules and commands, parallel and background agents, Bugbot, MCP with Context7 and hooks, with interactive exercises.",
+    intro:
+      "A former PayPal and Capital One engineer builds a half-finished FastAPI and Next.js task API from about 30% to 80% while showing how he uses Cursor end to end. This summary is organized by topic and kept to the point: the mental model, the three interaction levels, giving the right context, the plan-then-agent workflow and its safety habits, rules and slash commands, parallel and background agents, Bugbot, Context7 and other MCP servers, and why reviewing still matters.",
+    guest: "ByteMonk",
+    guestBio: "Software engineer and YouTube educator; previously worked on banking codebases at PayPal and Capital One",
+    show: "ByteMonk",
+    sourceUrl: "https://www.youtube.com/watch?v=CZUtIIK4fdw",
+    youtubeId: "CZUtIIK4fdw",
+    publishedAt: "2026-10-11",
+    tags: [
+      "Cursor",
+      "AI coding",
+      "Command K",
+      "Context engineering",
+      "Plan mode",
+      "Agent mode",
+      "Cursor rules",
+      "Slash commands",
+      "Parallel agents",
+      "Background agents",
+      "Bugbot",
+      "MCP",
+    ],
+    stats: [
+      { value: "3 levels", label: "Tab when in flow, Command K for one file, chat for reasoning and multi-file changes" },
+      { value: "Commit first", label: "Always commit before running the agent, so you have a clean revert point" },
+      { value: "~1 hour", label: "A sequential afternoon of three independent tasks with parallel agents" },
+      { value: "~30 minutes", label: "To set up rules, commands and memories, paid back on every interaction after" },
+    ],
+    searchExamples: ["plan mode", "rules", "Context7", "Bugbot"],
+    hi: {
+      title: "Cursor Deep Dive: Senior Engineers असल में 10x Productivity के लिए Cursor कैसे use करते हैं",
+      description:
+        "ByteMonk के Cursor deep dive की to-the-point summary: new-hire mental model, Tab vs Command K vs chat, @ context, पहले plan mode फिर agent mode, rules और commands, parallel और background agents, Bugbot, Context7 के साथ MCP और hooks, interactive exercises के साथ।",
+      intro:
+        "PayPal और Capital One में काम कर चुके एक engineer, एक आधे-अधूरे FastAPI और Next.js task API को लगभग 30% से 80% तक बनाते हुए दिखाते हैं कि वो Cursor को end to end कैसे use करते हैं। यह summary topic के हिसाब से organized और to-the-point है: mental model, interaction के तीन levels, सही context देना, plan-then-agent workflow और उसकी safety habits, rules और slash commands, parallel और background agents, Bugbot, Context7 और दूसरे MCP servers, और review करना अब भी क्यों ज़रूरी है।",
+      guestBio: "Software engineer और YouTube educator; पहले PayPal और Capital One में banking codebases पर काम कर चुके हैं",
+      tags: [
+        "Cursor",
+        "AI coding",
+        "Command K",
+        "Context engineering",
+        "Plan mode",
+        "Agent mode",
+        "Cursor rules",
+        "Slash commands",
+        "Parallel agents",
+        "Background agents",
+        "Bugbot",
+        "MCP",
+      ],
+      stats: [
+        { value: "3 levels", label: "Flow में Tab, एक file के लिए Command K, reasoning और multi-file changes के लिए chat" },
+        { value: "पहले commit", label: "Agent चलाने से पहले हमेशा commit करें, ताकि साफ़ revert point रहे" },
+        { value: "~1 घंटा", label: "Parallel agents के साथ तीन independent tasks की sequential दोपहर" },
+        { value: "~30 minute", label: "Rules, commands और memories set up करने में, जिसका फ़ायदा हर interaction में मिलता है" },
+      ],
+    },
+  },
 ];
 
 export function getSummary(slug: string): SummaryMeta | undefined {

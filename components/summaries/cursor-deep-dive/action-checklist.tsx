@@ -1,0 +1,73 @@
+"use client";
+
+import { useLocalized } from "@/components/providers/locale-provider";
+import { ChecklistExercise } from "@/components/summary/checklist-exercise";
+
+const ITEMS = {
+  en: [
+    "Treat the agent like a brilliant new hire who knows nothing about my codebase, and give it context fast",
+    "Use Sonnet for most tasks, Opus for architecture or subtle multi-file bugs, and Auto for quick edits",
+    "Try voice input (Cursor's voice mode or Wispr Flow) for long prompts",
+    "After accepting a Tab suggestion, press Tab again to chain the next edit",
+    "Use Command K for targeted changes in a single file: highlight, instruct, review the diff",
+    "Use Command K in the terminal when I can't remember a command's syntax",
+    "Switch to chat as soon as a change touches more than one file",
+    "Use @ to give only the relevant files, docs, git history or terminal output; relevance beats volume",
+    "Open a new chat for every new task: one task, one chat",
+    "When debugging, send @terminal output and a screenshot in the same message",
+    "Repeat a pattern by pointing the agent at the commit where I first did it",
+    "Start anything non-trivial in plan mode, edit the plan, then hit Build",
+    "Bring requirements docs or PRs into plan mode with @file",
+    "Commit before running the agent, so I always have a clean revert point",
+    "Run and test the app before hitting Keep All",
+    "Ask a second model to review the agent's changes before accepting them",
+    "Generate project rules from my codebase with /generate, then customize them",
+    "Borrow battle-tested rules for my stack from cursor.directory",
+    "Scope rules with glob patterns so front-end and back-end rules stay separate",
+    "Use project rules for team conventions and user rules for personal preferences",
+    "Save any prompt I've written more than twice as a command in .cursor/commands and commit it",
+    "Run parallel agents only on independent tasks (a feature, a bug fix, a test suite)",
+    "Write background-agent tasks like proper tickets: clear scope and acceptance criteria",
+    "Check whether my code is allowed to leave my machine before using cloud agents",
+    "Set up Bugbot on every active repository",
+    "Install Context7 as my first MCP server and add a rule to always use it for API docs",
+    "Add more MCP servers one at a time, starting with the tools I use daily",
+    "Look into hooks to run my own scripts after edits, before commands and after commits",
+    "Never go full autopilot: review and understand every change before it ships",
+  ],
+  hi: [
+    "Agent को एक brilliant new hire की तरह मानना जो मेरे codebase के बारे में कुछ नहीं जानता, और उसे जल्दी context देना",
+    "ज़्यादातर tasks के लिए Sonnet, architecture या subtle multi-file bugs के लिए Opus, और quick edits के लिए Auto",
+    "लंबे prompts के लिए voice input (Cursor का voice mode या Wispr Flow) आज़माना",
+    "Tab suggestion accept करने के बाद अगला edit chain करने के लिए फिर से Tab दबाना",
+    "एक file में targeted changes के लिए Command K: highlight, instruct, diff review",
+    "Command की syntax याद न हो तो terminal में Command K use करना",
+    "जैसे ही change एक से ज़्यादा files छुए, chat पर switch करना",
+    "@ से सिर्फ़ relevant files, docs, git history या terminal output देना; relevance, volume से बेहतर है",
+    "हर नए task के लिए नई chat खोलना: one task, one chat",
+    "Debugging में @terminal output और screenshot एक ही message में भेजना",
+    "Pattern दोहराने के लिए agent को उस commit की तरफ़ point करना जहाँ मैंने पहली बार किया था",
+    "हर non-trivial काम plan mode में शुरू करना, plan edit करना, फिर Build दबाना",
+    "Requirements docs या PRs को @file से plan mode में लाना",
+    "Agent चलाने से पहले commit करना, ताकि हमेशा साफ़ revert point रहे",
+    "Keep All दबाने से पहले app चलाकर test करना",
+    "Accept करने से पहले agent के changes किसी दूसरे model से review करवाना",
+    "/generate से अपने codebase से project rules generate करना, फिर उन्हें customize करना",
+    "अपने stack के लिए battle-tested rules cursor.directory से लेना",
+    "Glob patterns से rules scope करना ताकि front-end और back-end rules अलग रहें",
+    "Team conventions के लिए project rules और personal preferences के लिए user rules",
+    "जो prompt दो बार से ज़्यादा लिखा हो उसे .cursor/commands में command के रूप में save और commit करना",
+    "Parallel agents सिर्फ़ independent tasks पर चलाना (एक feature, एक bug fix, एक test suite)",
+    "Background-agent tasks proper tickets की तरह लिखना: साफ़ scope और acceptance criteria",
+    "Cloud agents use करने से पहले check करना कि मेरा code मेरी machine से बाहर जा सकता है या नहीं",
+    "हर active repository पर Bugbot set up करना",
+    "पहले MCP server के रूप में Context7 install करना और API docs के लिए हमेशा उसे use करने का rule जोड़ना",
+    "बाकी MCP servers एक-एक करके जोड़ना, रोज़ use होने वाले tools से शुरू करके",
+    "Edits के बाद, commands से पहले और commits के बाद अपनी scripts चलाने के लिए hooks देखना",
+    "कभी full autopilot पर नहीं: ship होने से पहले हर change review करना और समझना",
+  ],
+};
+
+export function ActionChecklist() {
+  return <ChecklistExercise items={useLocalized(ITEMS)} />;
+}

@@ -1,0 +1,169 @@
+import { ActionChecklist, AgentWorkflow, CommandBuilder, ToolPicker } from "@/components/summaries/cursor-deep-dive";
+
+<Section id="tldr" title="The whole video in 60 seconds">
+<p>ByteMonk builds a half-finished task management API (FastAPI and Next.js, "a lightweight Jira backend") from about 30% to 80% while walking through how experienced engineers use Cursor end to end:</p>
+<ol>
+  <li><b>Mental model:</b> the AI is a brilliant new hire who knows every framework but nothing about <i>your</i> codebase. Your job is to give it context fast.</li>
+  <li><b>Three interaction levels:</b> Tab when you're in flow, Command K for a targeted change in one file, chat for reasoning and multi-file work.</li>
+  <li><b>Context with @:</b> reference only the relevant files, docs, git history or terminal output. Relevance beats volume. One task, one chat.</li>
+  <li><b>Plan mode, then agent mode</b> for anything non-trivial. Commit first, test before you hit Keep All, and have a second model review.</li>
+  <li><b>Rules, commands and memories</b> give the agent your team's standards and reusable workflows, so you stop repeating yourself.</li>
+  <li><b>Advanced:</b> parallel agents for independent tasks, background agents for well-defined tickets, Bugbot on every PR, Context7 as your first MCP server, and hooks.</li>
+</ol>
+<KeyPoint><b>Intent, context, constraints, validate, repeat</b>Your job is no longer to write every line. It's to give the right context, set the right constraints and validate the output. The people who get 10x more productive aren't the ones who know the most shortcuts; they give better context, write better rules, build better commands and plan before the agent runs.</KeyPoint>
+</Section>
+
+<Section id="mental-model" title="What Cursor is and how to think about it">
+<ul>
+  <li>Cursor is a code editor <b>built on VS Code</b>: same shortcuts, extensions and interface. Switching takes about 5 minutes. Coming from VS Code, pick the <b>editor view</b> over the agentic view and you're productive immediately.</li>
+  <li>The fundamental difference: a normal editor sees the file you have open. <b>Cursor sees your entire codebase</b>: every function, class and relationship between files.</li>
+</ul>
+<KeyPoint><b>The brilliant new hire</b>Think of the AI as an engineer who just joined your team. They know every language, framework and design pattern, but nothing about your conventions, legacy decisions or folder structure. Without that knowledge they default to generic patterns: code that compiles but is architecturally wrong for your project.</KeyPoint>
+<h3>Setup: models and voice</h3>
+<Grid cols={3}>
+  <Box><h4>Auto</h4>On the free plan. Picks a model per task, and it's good enough for everything in the video. Fine for quick edits on any plan.</Box>
+  <Box><h4>Sonnet</h4>On Pro ($20 a month). Use it for most tasks: fast and accurate.</Box>
+  <Box><h4>Opus</h4>For complex work like designing architecture or debugging a subtle multi-file issue.</Box>
+</Grid>
+<p>For long prompts, <b>speak instead of typing</b>: Cursor has a built-in voice mode, and the free tool Wispr Flow also works well.</p>
+</Section>
+
+<Section id="tab" title="Tab: the AI keeps up with you">
+<ul>
+  <li>Tab is Cursor's autocomplete, but instead of predicting the next few characters it <b>predicts your next edit</b>, often whole blocks across multiple lines, based on the surrounding code and your intent.</li>
+  <li>It's always on. If a suggestion is wrong, press Escape or keep typing and it adjusts.</li>
+</ul>
+<KeyPoint><b>Don't stop at one Tab</b>After accepting a suggestion, press Tab again right away. Cursor predicts the next logical change based on what you just accepted, so you can chain through repetitive code very fast.</KeyPoint>
+</Section>
+
+<Section id="command-k" title="Command K: targeted edits in one file">
+<p>Probably the one you'll use most day to day. The pattern is <b>highlight, instruct, review</b>.</p>
+<ul>
+  <li>In the project, the notification service had no error handling. He highlights the block, presses Command K, types "add error handling to every function" and gets a diff: <b>green for additions, red for removals</b>. Accept. About 10 seconds, without leaving the file.</li>
+  <li>Works for anything targeted: convert to async, add type annotations, refactor to the strategy pattern. Nothing else changes.</li>
+  <li><b>It works in the terminal too.</b> Describe what you want in plain English ("show me the last five commit messages", "run all unit tests and log the failures") and it writes the shell command.</li>
+</ul>
+<Warn><b>Know its boundary</b>Command K is for changes in a single file. The moment a change involves more than one file, switch to chat. Pushing Command K beyond that gives worse results.</Warn>
+</Section>
+
+<Section id="chat" title="Chat and the @ context system">
+<p>Chat (Command L) is for <b>reasoning, multi-file changes and questions</b> about how your code works. Unlike a general chatbot, it has awareness of your codebase, but it doesn't automatically know which part is relevant. That's what <b>@</b> is for, and getting good at it is what separates great results from inconsistent ones.</p>
+<ul>
+  <li><b>@ can pull in</b> specific files and folders, official documentation, git history, terminal output and live web content.</li>
+  <li><b>Example:</b> the notification was failing silently. New chat, <b>@terminal</b> for the error output, <b>@notification-service</b> for the file, describe the problem. It found the issue immediately, with no copy-pasting between windows.</li>
+</ul>
+<KeyPoint><b>Bigger context does not mean better answers</b>Relevance beats volume. Dumping the whole codebase into a simple bug fix gets a worse answer than referencing the two files involved, because the model gets confused by noise the same way a human would. Here's the file, here's the error, fix it.</KeyPoint>
+<h3>Three chat habits</h3>
+<ul>
+  <li><b>One task, one chat.</b> Saving tokens is the shallow reason. The real one: stale context from a previous task makes the agent assume things about the wrong problem. He calls it the number one cause of bad output in Cursor.</li>
+  <li><b>Debugging:</b> combine <b>@terminal and a screenshot</b> in the same message. The model gets the technical signal and the visual context at once, which cuts the back-and-forth.</li>
+  <li><b>Repeating a pattern:</b> "Look at what we did in commit abc123 and implement the same error handling pattern in email-service." Cursor reads the diff and mirrors it exactly.</li>
+</ul>
+<SimpleTable>
+<thead>
+<tr><th>Tool</th><th>Reach for it when</th></tr>
+</thead>
+<tbody>
+  <tr><td><b>Tab</b></td><td>You're in flow and want the AI to keep up</td></tr>
+  <tr><td><b>Command K</b></td><td>You know exactly what needs to change, in one place</td></tr>
+  <tr><td><b>Chat</b></td><td>You need reasoning, or changes across multiple files</td></tr>
+</tbody>
+</SimpleTable>
+
+<ToolPicker />
+</Section>
+
+<Section id="plan-agent" title="Plan mode, then agent mode">
+<p>Most developers switch straight to agent mode, describe what they want and let it run, then end up in a <b>correction loop</b>: reasonable but not quite right, correct it, it drifts, correct again. The fix is plan mode.</p>
+<ul>
+  <li><b>Example:</b> a task labels feature (urgent, blocked, in review) that needs front-end changes, back-end changes and a database migration. Exactly the kind of task where agent mode alone produces something that works but doesn't fit the codebase.</li>
+  <li>In plan mode Cursor writes no code. It produces an <b>architecture overview, the schema changes and a checklist of every step</b>. You can edit it, add a to-do or cut something out of scope. The plan is yours.</li>
+  <li>Hit <b>Build</b> and Cursor switches to agent mode and works through the checklist: migration, model, API endpoints, front end, ticking off each item.</li>
+  <li>If you already have a requirements doc or a PR, <b>bring it in with @file</b> at the start and the plan is built from it, skipping the clarifying questions.</li>
+</ul>
+<Warn><b>Test before you hit Keep All</b>The code is written to your files as the agent goes, so it's already on disk. Run the app and check the behavior first. Undo All is there if it went wrong, but that window closes as you keep building.</Warn>
+<KeyPoint><b>The most important habit: commit before you run the agent</b>Not after, before. If the agent touches 15 files and goes in a direction you don't want, you have a clean revert point. "This will save you at some point. I can guarantee that."</KeyPoint>
+<p>There's also a built-in quality gate: one model wrote the code, so <b>ask a second model to review the changes</b> before you accept them. It catches what the first missed.</p>
+
+<AgentWorkflow />
+</Section>
+
+<Section id="rules" title="Rules: the onboarding talk, written once">
+<p>The agent remembers nothing between sessions. Every new chat is a blank slate: it doesn't know your team uses async database calls, your folder conventions, or that a legacy auth module must never be modified directly. A <b>rule</b> is a persistent instruction the agent reads before every interaction in your project, like the day-one talk you'd give a new engineer.</p>
+<ul>
+  <li><b>Don't write them from scratch.</b> Type <b>/generate</b> in chat and Cursor scans your codebase (patterns, imported libraries, file structure) and produces a matching rules file in about 30 seconds. Review it, adjust, done.</li>
+  <li><b>cursor.directory</b> has battle-tested rule sets for specific stacks (Next.js, TypeScript, Python, React, UI and UX). Find yours, bring it in and adjust.</li>
+  <li><b>Scope rules with glob patterns</b> so back-end rules only apply to back-end files and front-end rules to the front end. Irrelevant rules add noise, and noise lowers output quality.</li>
+</ul>
+<Grid cols={2}>
+  <Box><h4>Project rules</h4>Live in your git repo and apply to every developer who pulls. Use these for team conventions.</Box>
+  <Box><h4>User rules</h4>Personal preferences that stay on your machine and never get committed.</Box>
+</Grid>
+</Section>
+
+<Section id="commands" title="Commands: your best prompts, reusable">
+<p>A command is a <b>reusable instruction saved as a markdown file</b> and triggered with a slash. This is where individual productivity becomes team productivity.</p>
+<ul>
+  <li><b>Example:</b> structured logging in the task, notification and email services. Instead of writing a detailed prompt three times, he creates <b>.cursor/commands/add-logging.md</b>: import the logging library, create a logger, log at the start of every function with context, log errors in every exception block, plus a reference snippet.</li>
+  <li>Then: new chat, <b>/add-logging</b>, reference the file, enter. Same structure every time across all three services.</li>
+  <li>The commands folder lives in <b>.cursor</b> in your repo. Commit it, and every developer who pulls, including a new hire on day one, gets every workflow your team has built.</li>
+</ul>
+<KeyPoint><b>The rule of two</b>If you've written the same kind of prompt more than twice (adding logging, writing tests, migrating an API version), save it as a command.</KeyPoint>
+<p><b>Memories</b> round it out by giving the agent persistent context across sessions. Set up rules, commands and memories at the start of every project: about 30 minutes the first time, and it pays back on every agent interaction after.</p>
+
+<CommandBuilder />
+</Section>
+
+<Section id="parallel" title="Parallel agents">
+<p>Cursor can run <b>several agents at once</b>, each on a separate task in its own isolated workspace. Under the hood it uses <b>git worktrees</b>: each agent gets its own branch and can't interfere with the others.</p>
+<ul>
+  <li><b>Example:</b> pagination for the task list API, unit tests for the notification service, and the task counter bug. Normally a sequential afternoon; with three agents running at once and a review at the end, about an hour.</li>
+  <li><b>Good candidates:</b> a new feature, a bug fix and a test suite. They touch different parts of the codebase and don't need to coordinate.</li>
+</ul>
+<Warn><b>Don't parallelize dependent tasks</b>If tasks depend on each other's output, you get merge conflicts that cost more time than you save.</Warn>
+</Section>
+
+<Section id="background" title="Background agents">
+<ul>
+  <li>Background agents run <b>in the cloud, not on your machine</b>. Cursor spins up an isolated environment, clones your repo, works on a separate branch and produces a <b>merge-ready pull request</b> with screenshots, logs and a recording.</li>
+  <li>Trigger one and close your laptop; there's a PR waiting when you come back. You can also start them from <b>Slack, GitHub and Linear</b>, for example by assigning a Linear ticket.</li>
+  <li><b>The keyword is well-defined.</b> A vague instruction produces a vague PR that takes longer to review than it saved. Write it like a proper ticket: clear scope, clear acceptance criteria.</li>
+</ul>
+<Warn><b>Your code leaves your machine</b>Cloud agents clone your repository onto someone else's servers. For banking, healthcare or other sensitive codebases, security teams often won't allow that. He spent years on codebases like that at PayPal and Capital One.</Warn>
+<Box><h4>Sponsor segment: Origin</h4>The video's sponsor pitches Origin for teams that can't send code to an outside cloud: a cloud-agent workflow where each worktree runs in a hardware-isolated, encrypted sandbox, with a one-click report proving where the code ran, nothing retained or used for training, and the environment torn down afterwards. There's also a fully local mode. It's an ad, so weigh it accordingly.</Box>
+</Section>
+
+<Section id="bugbot" title="Bugbot: a review pass on every PR">
+<ul>
+  <li>Bugbot connects to your GitHub repo and <b>automatically reviews every pull request</b>, leaving comments on likely bugs like a human reviewer.</li>
+  <li>Each issue comes with a <b>Fix in Cursor</b> link that opens Cursor with a pre-filled prompt pointing at the problem. Fix and push.</li>
+  <li>At scale, every PR gets an immediate first pass, so human reviewers spend their time on architecture and logic instead of missing null checks and unhandled exceptions.</li>
+</ul>
+<KeyPoint><b>Set it up on every active repository</b>About 5 minutes to configure, then it runs automatically.</KeyPoint>
+</Section>
+
+<Section id="mcp" title="MCP, Context7 and hooks">
+<p><b>MCP (Model Context Protocol)</b> is a plug-in system that lets the agent work directly with external tools (GitHub, Notion, Figma, Stripe, Playwright, databases) without you switching context. He cites over 1,800 MCP servers.</p>
+<h3>Install Context7 first</h3>
+<ul>
+  <li>Models write framework code from training data with a cutoff date. If FastAPI or Next.js shipped a major update six months ago, you can get code that compiles and runs but uses <b>deprecated patterns</b>, and you find out when production breaks.</li>
+  <li><b>Context7</b> serves up-to-date documentation for major frameworks, updated daily. Add it (one-click setup), then add a rule: <b>always use Context7 for API documentation</b>. The agent fetches current docs before writing framework-specific code.</li>
+  <li>After that, <b>add MCP servers incrementally</b>, starting with what you use every day: GitHub for PRs, Notion if your specs live there, Playwright for end-to-end tests. Each one removes a context switch.</li>
+</ul>
+<h3>Hooks</h3>
+<p>A hook runs <b>your own scripts at specific points in the agent loop</b>: after every file edit, before a command runs and after a commit.</p>
+</Section>
+
+<Section id="mindset" title="The real 10x skill">
+<ul>
+  <li>By the end, the project is at about 80%: auth, error handling, task labels, consistent logging, pagination, tests, the counter bug fixed, Bugbot on every PR and current docs via Context7.</li>
+  <li>The loop: <b>intent, context, constraints, validate, repeat</b>. The agent executes; you guide and review.</li>
+  <li>That skill gets <b>more valuable as models get better</b>, not less.</li>
+</ul>
+<Warn><b>Don't go on full autopilot</b>Review what the agent writes and understand the changes before you accept them. The code that ships to production is your responsibility, regardless of who or what wrote it.</Warn>
+<p>The project skeleton used throughout is linked in the video description, so you can open it in Cursor and practice each tip.</p>
+</Section>
+
+<Section id="checklist" title="Action checklist: everything you can do from this video" variant="checklist">
+<ActionChecklist />
+</Section>

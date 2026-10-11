@@ -1,0 +1,169 @@
+import { ActionChecklist, AgentWorkflow, CommandBuilder, ToolPicker } from "@/components/summaries/cursor-deep-dive";
+
+<Section id="tldr" title="पूरा video 60 seconds में">
+<p>ByteMonk एक आधे-अधूरे task management API (FastAPI और Next.js, "a lightweight Jira backend") को लगभग 30% से 80% तक बनाते हुए दिखाते हैं कि experienced engineers Cursor को end to end कैसे use करते हैं:</p>
+<ol>
+  <li><b>Mental model:</b> AI एक brilliant new hire है जो हर framework जानता है लेकिन <i>आपके</i> codebase के बारे में कुछ नहीं। आपका काम उसे जल्दी context देना है।</li>
+  <li><b>Interaction के तीन levels:</b> flow में हों तो Tab, एक file में targeted change के लिए Command K, reasoning और multi-file काम के लिए chat।</li>
+  <li><b>@ से context:</b> सिर्फ़ relevant files, docs, git history या terminal output दें। Relevance, volume से बेहतर है। One task, one chat।</li>
+  <li>हर non-trivial काम के लिए <b>पहले plan mode, फिर agent mode</b>। पहले commit करें, Keep All से पहले test करें, और किसी दूसरे model से review करवाएँ।</li>
+  <li><b>Rules, commands और memories</b> agent को आपकी team के standards और reusable workflows देते हैं, ताकि बार-बार एक ही बात न दोहरानी पड़े।</li>
+  <li><b>Advanced:</b> independent tasks के लिए parallel agents, well-defined tickets के लिए background agents, हर PR पर Bugbot, पहले MCP server के रूप में Context7, और hooks।</li>
+</ol>
+<KeyPoint><b>Intent, context, constraints, validate, repeat</b>अब आपका काम हर line लिखना नहीं है। आपका काम सही context देना, सही constraints set करना और output validate करना है। जो लोग 10x productive बनते हैं वो सबसे ज़्यादा shortcuts जानने वाले नहीं होते; वो बेहतर context देते हैं, बेहतर rules और commands बनाते हैं, और agent चलाने से पहले plan करते हैं।</KeyPoint>
+</Section>
+
+<Section id="mental-model" title="Cursor क्या है और इसके बारे में कैसे सोचें">
+<ul>
+  <li>Cursor एक code editor है जो <b>VS Code पर बना है</b>: वही shortcuts, extensions और interface। Switch करने में लगभग 5 minute लगते हैं। VS Code से आ रहे हैं तो agentic view की जगह <b>editor view</b> चुनें और तुरंत productive हो जाएँ।</li>
+  <li>बुनियादी फ़र्क: normal editor सिर्फ़ खुली हुई file देखता है। <b>Cursor आपका पूरा codebase देखता है</b>: हर function, class और files के बीच का हर relationship।</li>
+</ul>
+<KeyPoint><b>Brilliant new hire</b>AI को ऐसे engineer की तरह सोचें जिसने अभी-अभी आपकी team join की है। वो हर language, framework और design pattern जानता है, लेकिन आपकी conventions, legacy decisions या folder structure के बारे में कुछ नहीं। यह जानकारी न हो तो वो generic patterns पर चला जाता है: ऐसा code जो compile तो होता है लेकिन आपके project के लिए architecturally ग़लत है।</KeyPoint>
+<h3>Setup: models और voice</h3>
+<Grid cols={3}>
+  <Box><h4>Auto</h4>Free plan पर। हर task के लिए model ख़ुद चुनता है, और video की हर चीज़ के लिए काफ़ी है। किसी भी plan पर quick edits के लिए ठीक।</Box>
+  <Box><h4>Sonnet</h4>Pro ($20 महीना) पर। ज़्यादातर tasks के लिए use करें: fast और accurate।</Box>
+  <Box><h4>Opus</h4>Complex काम के लिए, जैसे architecture design करना या कोई subtle multi-file issue debug करना।</Box>
+</Grid>
+<p>लंबे prompts के लिए <b>type करने की जगह बोलें</b>: Cursor में built-in voice mode है, और free tool Wispr Flow भी अच्छा काम करता है।</p>
+</Section>
+
+<Section id="tab" title="Tab: AI आपके साथ चलता है">
+<ul>
+  <li>Tab, Cursor का autocomplete है, लेकिन यह अगले कुछ characters नहीं बल्कि <b>आपका अगला edit predict करता है</b>, अक्सर कई lines के पूरे blocks, आसपास के code और आपके intent के आधार पर।</li>
+  <li>यह हमेशा on रहता है। Suggestion ग़लत हो तो Escape दबाएँ या type करते रहें, यह adjust हो जाता है।</li>
+</ul>
+<KeyPoint><b>एक Tab पर न रुकें</b>Suggestion accept करने के बाद तुरंत फिर Tab दबाएँ। Cursor अभी accept किए गए change के आधार पर अगला logical change predict करता है, इसलिए repetitive code में आप बहुत तेज़ी से आगे बढ़ सकते हैं।</KeyPoint>
+</Section>
+
+<Section id="command-k" title="Command K: एक file में targeted edits">
+<p>शायद रोज़ सबसे ज़्यादा यही use होगा। Pattern है <b>highlight, instruct, review</b>।</p>
+<ul>
+  <li>Project में notification service में कोई error handling नहीं थी। वो block highlight करते हैं, Command K दबाते हैं, "add error handling to every function" type करते हैं और एक diff मिलता है: <b>जोड़ी गई चीज़ें हरी, हटाई गई लाल</b>। Accept। लगभग 10 seconds, file छोड़े बिना।</li>
+  <li>किसी भी targeted काम के लिए: async में convert करना, type annotations जोड़ना, strategy pattern में refactor करना। बाकी कुछ नहीं बदलता।</li>
+  <li><b>यह terminal में भी काम करता है।</b> सादी English में बताएँ ("show me the last five commit messages", "run all unit tests and log the failures") और यह shell command लिख देता है।</li>
+</ul>
+<Warn><b>इसकी सीमा जानें</b>Command K एक file के changes के लिए है। जैसे ही change एक से ज़्यादा files छुए, chat पर switch करें। Command K को उससे आगे धकेलने पर results ख़राब होते हैं।</Warn>
+</Section>
+
+<Section id="chat" title="Chat और @ context system">
+<p>Chat (Command L) <b>reasoning, multi-file changes और आपका code कैसे काम करता है</b> इसके सवालों के लिए है। General chatbot के उलट इसे आपके codebase की जानकारी है, लेकिन यह अपने आप नहीं जानता कि कौन-सा हिस्सा relevant है। इसी के लिए <b>@</b> है, और इसमें अच्छा होना ही great और inconsistent results के बीच का फ़र्क है।</p>
+<ul>
+  <li><b>@ से ला सकते हैं</b> specific files और folders, official documentation, git history, terminal output और live web content।</li>
+  <li><b>Example:</b> notification चुपचाप fail हो रहा था। नई chat, error output के लिए <b>@terminal</b>, file के लिए <b>@notification-service</b>, problem describe की। उसने तुरंत issue पकड़ लिया, windows के बीच कोई copy-paste नहीं।</li>
+</ul>
+<KeyPoint><b>बड़ा context मतलब बेहतर जवाब नहीं</b>Relevance, volume से बेहतर है। एक simple bug fix में पूरा codebase डालने से जवाब उससे ख़राब मिलता है जितना सिर्फ़ दो relevant files देने पर मिलता, क्योंकि model भी इंसान की तरह noise से confuse होता है। यह file है, यह error है, fix करो।</KeyPoint>
+<h3>Chat की तीन habits</h3>
+<ul>
+  <li><b>One task, one chat।</b> Tokens बचाना ऊपरी वजह है। असली वजह: पिछले task का पुराना context agent को ग़लत problem के आधार पर assumptions करवाता है। वो इसे Cursor में ख़राब output की number one वजह बताते हैं।</li>
+  <li><b>Debugging:</b> एक ही message में <b>@terminal और screenshot</b> दें। Model को technical signal और visual context एक साथ मिलते हैं, जिससे back-and-forth कम होता है।</li>
+  <li><b>Pattern दोहराना:</b> "Look at what we did in commit abc123 and implement the same error handling pattern in email-service." Cursor diff पढ़कर उसे बिल्कुल वैसे ही दोहराता है।</li>
+</ul>
+<SimpleTable>
+<thead>
+<tr><th>Tool</th><th>कब use करें</th></tr>
+</thead>
+<tbody>
+  <tr><td><b>Tab</b></td><td>आप flow में हैं और चाहते हैं कि AI साथ चले</td></tr>
+  <tr><td><b>Command K</b></td><td>आपको ठीक पता है कि एक जगह क्या बदलना है</td></tr>
+  <tr><td><b>Chat</b></td><td>Reasoning चाहिए, या कई files में changes</td></tr>
+</tbody>
+</SimpleTable>
+
+<ToolPicker />
+</Section>
+
+<Section id="plan-agent" title="पहले plan mode, फिर agent mode">
+<p>ज़्यादातर developers सीधे agent mode पर जाते हैं, बताते हैं क्या चाहिए और उसे चलने देते हैं, फिर एक <b>correction loop</b> में फँस जाते हैं: ठीक-ठाक पर पूरी तरह सही नहीं, correct करो, वो भटकता है, फिर correct करो। इसका इलाज plan mode है।</p>
+<ul>
+  <li><b>Example:</b> task labels feature (urgent, blocked, in review) जिसमें front-end changes, back-end changes और database migration चाहिए। ठीक इसी तरह के task में अकेला agent mode ऐसा कुछ बनाता है जो चलता तो है लेकिन codebase में fit नहीं होता।</li>
+  <li>Plan mode में Cursor कोई code नहीं लिखता। यह <b>architecture overview, schema changes और हर step की checklist</b> बनाता है। आप उसे edit कर सकते हैं, to-do जोड़ सकते हैं या scope से बाहर की चीज़ हटा सकते हैं। Plan आपका है।</li>
+  <li><b>Build</b> दबाते ही Cursor agent mode में चला जाता है और checklist पर काम करता है: migration, model, API endpoints, front end, हर item tick करते हुए।</li>
+  <li>अगर आपके पास पहले से requirements doc या PR है, तो शुरुआत में <b>उसे @file से लाएँ</b> और plan उसी से बनेगा, clarifying questions skip हो जाएँगे।</li>
+</ul>
+<Warn><b>Keep All से पहले test करें</b>Agent जैसे-जैसे लिखता है, code आपकी files में चला जाता है, यानी पहले से disk पर है। पहले app चलाकर behavior check करें। कुछ ग़लत हुआ तो Undo All है, लेकिन आगे build करते रहने पर वो मौका निकल जाता है।</Warn>
+<KeyPoint><b>सबसे ज़रूरी habit: agent चलाने से पहले commit करें</b>बाद में नहीं, पहले। अगर agent 15 files छूकर ऐसी दिशा में चला जाए जो आप नहीं चाहते, तो आपके पास साफ़ revert point है। "This will save you at some point. I can guarantee that."</KeyPoint>
+<p>एक built-in quality gate भी है: code एक model ने लिखा, तो accept करने से पहले <b>किसी दूसरे model से changes review करवाएँ</b>। पहले से जो छूटा वो पकड़ लेता है।</p>
+
+<AgentWorkflow />
+</Section>
+
+<Section id="rules" title="Rules: onboarding talk, एक बार लिखी हुई">
+<p>Agent को sessions के बीच कुछ याद नहीं रहता। हर नई chat एक blank slate है: उसे नहीं पता कि आपकी team हर जगह async database calls use करती है, आपकी folder conventions क्या हैं, या कि एक legacy auth module को कभी सीधे नहीं छूना है। <b>Rule</b> एक persistent instruction है जो agent आपके project में हर interaction से पहले पढ़ता है, जैसे पहले दिन किसी नए engineer को दी जाने वाली talk।</p>
+<ul>
+  <li><b>शुरू से न लिखें।</b> Chat में <b>/generate</b> type करें और Cursor आपका codebase scan करता है (patterns, imported libraries, file structure) और लगभग 30 seconds में matching rules file बना देता है। Review करें, adjust करें, हो गया।</li>
+  <li><b>cursor.directory</b> पर specific stacks (Next.js, TypeScript, Python, React, UI और UX) के लिए battle-tested rule sets हैं। अपना stack ढूँढें, लाएँ और adjust करें।</li>
+  <li><b>Glob patterns से rules scope करें</b> ताकि back-end rules सिर्फ़ back-end files पर और front-end rules front end पर लगें। Irrelevant rules noise बढ़ाते हैं, और noise output quality घटाता है।</li>
+</ul>
+<Grid cols={2}>
+  <Box><h4>Project rules</h4>आपकी git repo में रहते हैं और pull करने वाले हर developer पर लागू होते हैं। Team conventions के लिए इन्हें use करें।</Box>
+  <Box><h4>User rules</h4>Personal preferences जो आपकी machine पर रहती हैं और कभी commit नहीं होतीं।</Box>
+</Grid>
+</Section>
+
+<Section id="commands" title="Commands: आपके best prompts, बार-बार use के लिए">
+<p>Command एक <b>reusable instruction है जो markdown file के रूप में save होती है</b> और slash से चलती है। यहीं individual productivity, team productivity बन जाती है।</p>
+<ul>
+  <li><b>Example:</b> task, notification और email services में structured logging। तीन बार detailed prompt लिखने की जगह वो <b>.cursor/commands/add-logging.md</b> बनाते हैं: logging library import करो, logger बनाओ, हर function की शुरुआत में context के साथ log करो, हर exception block में errors log करो, साथ में एक reference snippet।</li>
+  <li>फिर: नई chat, <b>/add-logging</b>, file reference करें, enter। तीनों services में हर बार एक जैसा structure।</li>
+  <li>Commands folder आपकी repo में <b>.cursor</b> के अंदर रहता है। इसे commit करें, और pull करने वाले हर developer को, पहले दिन वाले new hire को भी, आपकी team के सारे workflows मिल जाते हैं।</li>
+</ul>
+<KeyPoint><b>दो बार का rule</b>अगर एक ही तरह का prompt दो बार से ज़्यादा लिखा है (logging जोड़ना, tests लिखना, API version migrate करना), तो उसे command के रूप में save करें।</KeyPoint>
+<p><b>Memories</b> agent को sessions के पार persistent context देकर इसे पूरा करती हैं। हर project की शुरुआत में rules, commands और memories set up करें: पहली बार लगभग 30 minute, और उसके बाद हर agent interaction में इसका फ़ायदा मिलता है।</p>
+
+<CommandBuilder />
+</Section>
+
+<Section id="parallel" title="Parallel agents">
+<p>Cursor <b>एक साथ कई agents</b> चला सकता है, हर एक अलग task पर अपने isolated workspace में। अंदर से यह <b>git worktrees</b> use करता है: हर agent को अपनी branch मिलती है और वो दूसरों में दख़ल नहीं दे सकता।</p>
+<ul>
+  <li><b>Example:</b> task list API के लिए pagination, notification service के लिए unit tests, और task counter bug। आम तौर पर एक sequential दोपहर; तीन agents एक साथ और आख़िर में review के साथ, लगभग एक घंटा।</li>
+  <li><b>अच्छे candidates:</b> एक नया feature, एक bug fix और एक test suite। ये codebase के अलग-अलग हिस्से छूते हैं और इन्हें coordinate करने की ज़रूरत नहीं।</li>
+</ul>
+<Warn><b>Dependent tasks को parallel न करें</b>अगर tasks एक-दूसरे के output पर depend करते हैं, तो merge conflicts आते हैं जो बचाए गए समय से ज़्यादा समय खा जाते हैं।</Warn>
+</Section>
+
+<Section id="background" title="Background agents">
+<ul>
+  <li>Background agents <b>आपकी machine पर नहीं, cloud में चलते हैं</b>। Cursor एक isolated environment बनाता है, आपकी repo clone करता है, अलग branch पर काम करता है और screenshots, logs और recording के साथ <b>merge-ready pull request</b> बनाता है।</li>
+  <li>एक चला दें और laptop बंद कर दें; लौटने पर PR इंतज़ार कर रहा होगा। इन्हें <b>Slack, GitHub और Linear</b> से भी शुरू कर सकते हैं, जैसे कोई Linear ticket assign करके।</li>
+  <li><b>Keyword है well-defined।</b> Vague instruction से vague PR मिलता है जिसका review बचाए गए समय से ज़्यादा लेता है। इसे proper ticket की तरह लिखें: साफ़ scope, साफ़ acceptance criteria।</li>
+</ul>
+<Warn><b>आपका code आपकी machine से बाहर जाता है</b>Cloud agents आपकी repository किसी और के servers पर clone करते हैं। Banking, healthcare या दूसरे sensitive codebases के लिए security teams अक्सर इसकी इजाज़त नहीं देतीं। वो PayPal और Capital One में ऐसे ही codebases पर सालों काम कर चुके हैं।</Warn>
+<Box><h4>Sponsor segment: Origin</h4>Video का sponsor Origin को उन teams के लिए pitch करता है जो code बाहर के cloud पर नहीं भेज सकतीं: cloud-agent workflow जिसमें हर worktree एक hardware-isolated, encrypted sandbox में चलता है, one-click report जो साबित करती है कि code कहाँ चला, कुछ भी retain या training में use नहीं होता, और बाद में environment हटा दिया जाता है। एक पूरी तरह local mode भी है। यह ad है, तो उसी हिसाब से तौलें।</Box>
+</Section>
+
+<Section id="bugbot" title="Bugbot: हर PR पर एक review pass">
+<ul>
+  <li>Bugbot आपकी GitHub repo से जुड़कर <b>हर pull request अपने आप review करता है</b>, और human reviewer की तरह संभावित bugs पर comments छोड़ता है।</li>
+  <li>हर issue के साथ <b>Fix in Cursor</b> link आता है जो Cursor को problem की तरफ़ point करते pre-filled prompt के साथ खोलता है। Fix करें और push करें।</li>
+  <li>Scale पर हर PR को तुरंत पहला pass मिलता है, इसलिए human reviewers missing null checks और unhandled exceptions की जगह architecture और logic पर समय लगाते हैं।</li>
+</ul>
+<KeyPoint><b>हर active repository पर set up करें</b>Configure करने में लगभग 5 minute, फिर अपने आप चलता है।</KeyPoint>
+</Section>
+
+<Section id="mcp" title="MCP, Context7 और hooks">
+<p><b>MCP (Model Context Protocol)</b> एक plug-in system है जिससे agent external tools (GitHub, Notion, Figma, Stripe, Playwright, databases) के साथ सीधे काम कर पाता है, बिना आपके context switch किए। वो 1,800 से ज़्यादा MCP servers बताते हैं।</p>
+<h3>पहले Context7 install करें</h3>
+<ul>
+  <li>Models framework code अपने training data से लिखते हैं, जिसकी एक cutoff date होती है। अगर FastAPI या Next.js का छह महीने पहले बड़ा update आया, तो ऐसा code मिल सकता है जो compile होता है और चलता है लेकिन <b>deprecated patterns</b> use करता है, और पता तब चलता है जब production टूटता है।</li>
+  <li><b>Context7</b> major frameworks की up-to-date documentation देता है, रोज़ update होती है। इसे जोड़ें (one-click setup), फिर एक rule जोड़ें: <b>API documentation के लिए हमेशा Context7 use करो</b>। Agent framework-specific code लिखने से पहले current docs लाता है।</li>
+  <li>उसके बाद <b>MCP servers धीरे-धीरे जोड़ें</b>, रोज़ use होने वाले tools से शुरू करके: PRs के लिए GitHub, specs वहाँ हों तो Notion, end-to-end tests के लिए Playwright। हर एक एक context switch हटाता है।</li>
+</ul>
+<h3>Hooks</h3>
+<p>Hook <b>agent loop के specific points पर आपकी अपनी scripts चलाता है</b>: हर file edit के बाद, command चलने से पहले और commit के बाद।</p>
+</Section>
+
+<Section id="mindset" title="असली 10x skill">
+<ul>
+  <li>आख़िर तक project लगभग 80% पर है: auth, error handling, task labels, एक जैसी logging, pagination, tests, counter bug fixed, हर PR पर Bugbot और Context7 से current docs।</li>
+  <li>Loop: <b>intent, context, constraints, validate, repeat</b>। Agent execute करता है; आप guide और review करते हैं।</li>
+  <li>यह skill <b>models बेहतर होने के साथ और ज़्यादा valuable होती है</b>, कम नहीं।</li>
+</ul>
+<Warn><b>Full autopilot पर न जाएँ</b>Agent जो लिखे उसे review करें और accept करने से पहले changes समझें। Production में जाने वाला code आपकी ज़िम्मेदारी है, चाहे उसे किसी ने भी या किसी भी चीज़ ने लिखा हो।</Warn>
+<p>पूरे video में use हुआ project skeleton video description में linked है, ताकि आप उसे Cursor में खोलकर हर tip की practice कर सकें।</p>
+</Section>
+
+<Section id="checklist" title="Action checklist: इस video से आप जो कुछ कर सकते हैं" variant="checklist">
+<ActionChecklist />
+</Section>
